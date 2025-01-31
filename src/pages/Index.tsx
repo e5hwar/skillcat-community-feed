@@ -27,6 +27,7 @@ const Index = () => {
           password: 'Community@123',
           options: {
             data: {
+              name: name,
               moodle_id: moodleId,
             },
           },
@@ -62,7 +63,10 @@ const Index = () => {
         if (user) {
           // Update auth.users metadata if name is different
           const { error: updateAuthError } = await supabase.auth.updateUser({
-            data: { moodle_id: moodleId }
+            data: { 
+              name: name,
+              moodle_id: moodleId 
+            }
           });
 
           if (updateAuthError) {
