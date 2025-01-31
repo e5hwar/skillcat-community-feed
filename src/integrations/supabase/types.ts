@@ -15,21 +15,21 @@ export type Database = {
           created_at: string | null
           id: number
           post_id: number | null
-          user_id: number | null
+          user_id: string | null
         }
         Insert: {
           content: string
           created_at?: string | null
-          id?: never
+          id?: number
           post_id?: number | null
-          user_id?: number | null
+          user_id?: string | null
         }
         Update: {
           content?: string
           created_at?: string | null
-          id?: never
+          id?: number
           post_id?: number | null
-          user_id?: number | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -53,19 +53,19 @@ export type Database = {
           created_at: string | null
           id: number
           post_id: number | null
-          user_id: number | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
-          id?: never
+          id?: number
           post_id?: number | null
-          user_id?: number | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
-          id?: never
+          id?: number
           post_id?: number | null
-          user_id?: number | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -90,23 +90,23 @@ export type Database = {
           created_at: string | null
           id: number
           image_url: string | null
-          user_id: number | null
+          user_id: string | null
           video_url: string | null
         }
         Insert: {
           content: string
           created_at?: string | null
-          id?: never
+          id?: number
           image_url?: string | null
-          user_id?: number | null
+          user_id?: string | null
           video_url?: string | null
         }
         Update: {
           content?: string
           created_at?: string | null
-          id?: never
+          id?: number
           image_url?: string | null
-          user_id?: number | null
+          user_id?: string | null
           video_url?: string | null
         }
         Relationships: [
@@ -123,7 +123,7 @@ export type Database = {
         Row: {
           bio: string | null
           email: string | null
-          id: number
+          id: string
           moodle_id: number | null
           name: string
           profile_picture: string | null
@@ -131,7 +131,7 @@ export type Database = {
         Insert: {
           bio?: string | null
           email?: string | null
-          id?: never
+          id: string
           moodle_id?: number | null
           name: string
           profile_picture?: string | null
@@ -139,7 +139,7 @@ export type Database = {
         Update: {
           bio?: string | null
           email?: string | null
-          id?: never
+          id?: string
           moodle_id?: number | null
           name?: string
           profile_picture?: string | null
