@@ -55,6 +55,33 @@ const Index = () => {
         if (profileError) {
           console.error('Error creating profile:', profileError);
         }
+      } else {
+        // User exists, check if name needs to be updated
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          // Update auth.users metadata if name is different
+          const { error: updateAuthError } = await supabase.auth.updateUser({
+            data: { moodle_id: moodleId }
+          });
+
+          if (updateAuthError) {
+            console.error('Error updating auth user:', updateAuthError);
+          }
+
+          // Update profile if name is different
+          const { error: updateProfileError } = await supabase
+            .from('profile')
+            .update({ 
+              name: name,
+              moodle_id: parseInt(moodleId)
+            })
+            .eq('id', user.id);
+
+          if (updateProfileError) {
+            console.error('Error updating profile:', updateProfileError);
+          }
+        }
       }
     } catch (error: any) {
       toast({
