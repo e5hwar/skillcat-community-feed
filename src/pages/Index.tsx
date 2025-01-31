@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AuthForm from "@/components/auth/AuthForm";
 import CreatePost from "@/components/posts/CreatePost";
 import PostCard from "@/components/posts/PostCard";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
@@ -12,7 +12,64 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  const autoSignIn = async (email: string, name: string) => {
+    try {
+      // Try to sign in first
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password: 'Community@123',
+      });
+
+      if (signInError) {
+        // If sign in fails, try to sign up
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password: 'Community@123',
+          options: {
+            data: {
+              name: name,
+            },
+          },
+        });
+
+        if (signUpError) throw signUpError;
+
+        // After signup, try to sign in again
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password: 'Community@123',
+        });
+
+        if (error) throw error;
+        
+        // Create profile after successful signup
+        const { error: profileError } = await supabase
+          .from('profile')
+          .insert([{ id: data.user.id, name: name, email: email }]);
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+        }
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
+    // Parse URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+    const name = urlParams.get('name');
+
+    if (email && name) {
+      autoSignIn(email, decodeURIComponent(name));
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
@@ -66,7 +123,9 @@ const Index = () => {
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <AuthForm />
+        <div className="text-center">
+          <p>Loading...</p>
+        </div>
       </div>
     );
   }
