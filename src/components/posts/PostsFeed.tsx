@@ -15,13 +15,14 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
 
   const fetchPosts = async () => {
     try {
+      console.log("Fetching posts...");
       const { data, error } = await supabase
         .from("posts")
         .select(`
           *,
           profile:profiles(name, bio, profile_picture),
-          likes:likes(count),
-          comments:comments(
+          likes(count),
+          comments(
             id,
             content,
             created_at,
@@ -30,9 +31,15 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
         `)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching posts:", error);
+        throw error;
+      }
+      
+      console.log("Fetched posts:", data);
       setPosts(data || []);
     } catch (error: any) {
+      console.error("Error in fetchPosts:", error);
       toast({
         title: "Error",
         description: error.message,
@@ -58,14 +65,20 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
       </header>
       <div className="space-y-6">
         <CreatePost userId={userId} onPostCreated={fetchPosts} />
-        {posts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            currentUserId={userId}
-            onLikeUpdate={fetchPosts}
-          />
-        ))}
+        {posts.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No posts yet. Be the first to share something!
+          </div>
+        ) : (
+          posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+              currentUserId={userId}
+              onLikeUpdate={fetchPosts}
+            />
+          ))
+        )}
       </div>
     </div>
   );
