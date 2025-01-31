@@ -12,7 +12,7 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const autoSignIn = async (email: string, name: string) => {
+  const autoSignIn = async (email: string, name: string, moodleId: string) => {
     try {
       // Try to sign in first
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -27,7 +27,7 @@ const Index = () => {
           password: 'Community@123',
           options: {
             data: {
-              name: name,
+              moodle_id: moodleId,
             },
           },
         });
@@ -45,7 +45,12 @@ const Index = () => {
         // Create profile after successful signup
         const { error: profileError } = await supabase
           .from('profile')
-          .insert([{ id: data.user.id, name: name, email: email }]);
+          .insert([{ 
+            id: data.user.id, 
+            name: name, 
+            email: email,
+            moodle_id: parseInt(moodleId)
+          }]);
 
         if (profileError) {
           console.error('Error creating profile:', profileError);
@@ -65,9 +70,10 @@ const Index = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get('email');
     const name = urlParams.get('name');
+    const id = urlParams.get('id');
 
-    if (email && name) {
-      autoSignIn(email, decodeURIComponent(name));
+    if (email && name && id) {
+      autoSignIn(email, decodeURIComponent(name), id);
     }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
