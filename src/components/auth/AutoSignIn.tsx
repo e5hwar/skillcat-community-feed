@@ -23,7 +23,7 @@ const AutoSignIn = ({ onSessionUpdate }: AutoSignInProps) => {
           email,
           password: 'Community@123',
           options: {
-            metadata: {
+            data: {
               name: name,
               moodle_id: moodleId,
             },
