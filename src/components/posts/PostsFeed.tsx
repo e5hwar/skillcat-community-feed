@@ -20,13 +20,13 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
         .from("posts")
         .select(`
           *,
-          profile:profiles(name, bio, profile_picture),
+          profile:profile(name, bio, profile_picture),
           likes(count),
           comments(
             id,
             content,
             created_at,
-            profile:profiles(name)
+            profile:profile(name)
           )
         `)
         .order("created_at", { ascending: false });
