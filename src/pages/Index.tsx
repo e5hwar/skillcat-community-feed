@@ -30,6 +30,10 @@ const Index = () => {
               name: name,
               moodle_id: moodleId,
             },
+            metadata: {
+              name: name,
+              moodle_id: moodleId,
+            }
           },
         });
 
@@ -66,6 +70,12 @@ const Index = () => {
             data: { 
               name: name,
               moodle_id: moodleId 
+            },
+            options: {
+              metadata: {
+                name: name,
+                moodle_id: moodleId
+              }
             }
           });
 
