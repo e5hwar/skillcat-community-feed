@@ -78,7 +78,8 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       const { error } = await supabase
         .from("comments")
         .delete()
-        .eq("id", commentId);
+        .eq("id", commentId)
+        .eq("user_id", currentUserId);
 
       if (error) throw error;
 
@@ -105,7 +106,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       <div className="flex items-start gap-3 w-full">
         <Avatar className="h-8 w-8">
           <AvatarImage src={undefined} />
-          <AvatarFallback>{getInitials(comments[0]?.profile?.name || 'U')}</AvatarFallback>
+          <AvatarFallback>{getInitials(comments[0]?.profile?.name || currentUserId)}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <Textarea
