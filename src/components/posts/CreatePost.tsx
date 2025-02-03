@@ -49,46 +49,16 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `${userId}/${fileName}`;
 
-    // Create a custom upload function that tracks progress
-    const data = new FormData();
-    data.append('file', file);
-
-    const xhr = new XMLHttpRequest();
-    
-    await new Promise<string>((resolve, reject) => {
-      xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-          const percent = (event.loaded / event.total) * 100;
+    const { error: uploadError, data } = await supabase.storage
+      .from('posts')
+      .upload(filePath, file, {
+        onUploadProgress: (progress) => {
+          const percent = (progress.loaded / progress.total) * 100;
           setUploadProgress(percent);
-        }
+        },
       });
 
-      xhr.addEventListener('error', () => {
-        reject(new Error('Upload failed'));
-      });
-
-      xhr.addEventListener('load', async () => {
-        if (xhr.status === 200) {
-          const { error: uploadError } = await supabase.storage
-            .from('posts')
-            .upload(filePath, file);
-
-          if (uploadError) reject(uploadError);
-          
-          const { data: { publicUrl } } = supabase.storage
-            .from('posts')
-            .getPublicUrl(filePath);
-            
-          resolve(publicUrl);
-        } else {
-          reject(new Error('Upload failed'));
-        }
-      });
-
-      // Start the upload
-      xhr.open('POST', `${supabase.storage.from('posts').getPublicUrl(filePath).data.publicUrl}`);
-      xhr.send(data);
-    });
+    if (uploadError) throw uploadError;
 
     const { data: { publicUrl } } = supabase.storage
       .from('posts')
