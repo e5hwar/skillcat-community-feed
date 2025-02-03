@@ -194,7 +194,7 @@ const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCard
                   >
                     <Trash className="h-4 w-4 mr-2" />
                     Delete post
-                    <span className="block text-xs font-normal text-red-500 mt-1">
+                    <span className="block text-xs text-gray-500 mt-1">
                       This cannot be undone
                     </span>
                   </DropdownMenuItem>
