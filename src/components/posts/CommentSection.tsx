@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -38,7 +38,26 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [visibleComments, setVisibleComments] = useState(COMMENTS_PER_PAGE);
+  const [currentUserProfile, setCurrentUserProfile] = useState<{ name: string; profile_picture: string | null } | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchCurrentUserProfile = async () => {
+      const { data, error } = await supabase
+        .from('profile')
+        .select('name, profile_picture')
+        .eq('id', currentUserId)
+        .single();
+
+      if (!error && data) {
+        setCurrentUserProfile(data);
+      }
+    };
+
+    if (currentUserId) {
+      fetchCurrentUserProfile();
+    }
+  }, [currentUserId]);
 
   // Sort comments by recency
   const sortedComments = [...comments].sort(
@@ -105,9 +124,9 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
     <div className="space-y-4 w-full">
       <div className="flex items-start gap-3 w-full">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={undefined} />
+          <AvatarImage src={currentUserProfile?.profile_picture || undefined} />
           <AvatarFallback className="bg-gray-100 text-gray-600">
-            EU
+            {currentUserProfile?.name ? getInitials(currentUserProfile.name) : ''}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
@@ -123,7 +142,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
             className="min-h-[32px] w-full resize-none overflow-hidden"
             style={{ 
               height: '32px',
-              padding: '8px 12px',
+              padding: '8px 16px',
               lineHeight: '20px'
             }}
             onInput={(e) => {
