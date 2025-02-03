@@ -26,11 +26,9 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
       const file = e.target.files[0];
       setSelectedFile(file);
       
-      // Create preview URL
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
       
-      // Clean up previous preview URL when component unmounts
       return () => URL.revokeObjectURL(url);
     }
   };
@@ -49,7 +47,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `${userId}/${fileName}`;
 
-    setUploadProgress(10); // Start progress
+    setUploadProgress(10);
 
     try {
       const { error: uploadError } = await supabase.storage
@@ -60,13 +58,13 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
 
       if (uploadError) throw uploadError;
 
-      setUploadProgress(70); // Update progress after upload
+      setUploadProgress(70);
 
       const { data: { publicUrl } } = supabase.storage
         .from('posts')
         .getPublicUrl(filePath);
 
-      setUploadProgress(100); // Complete progress
+      setUploadProgress(100);
       return publicUrl;
     } catch (error) {
       throw error;
@@ -151,7 +149,6 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
             disabled={isSubmitting}
           />
           
-          {/* Media Preview */}
           {previewUrl && selectedFile && (
             <div className="relative rounded-lg overflow-hidden bg-gray-100 inline-block">
               <Button
@@ -203,7 +200,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
           <Button 
             type="submit" 
             disabled={isSubmitting || (!content.trim() && !selectedFile)}
-            className="bg-blue-600 hover:bg-blue-700 relative"
+            className="bg-blue-600 hover:bg-blue-700 relative touch-manipulation"
           >
             {isSubmitting ? (
               <>

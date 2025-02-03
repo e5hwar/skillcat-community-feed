@@ -71,10 +71,9 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
   useEffect(() => {
     if (!isMobile) return;
 
-    // Add pull to refresh functionality
     let touchStart: number;
     let touchEnd: number;
-    const threshold = 100; // minimum pull distance to trigger refresh
+    const threshold = 100;
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStart = e.touches[0].clientY;
@@ -84,7 +83,6 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
       touchEnd = e.touches[0].clientY;
       const distance = touchEnd - touchStart;
       
-      // Only allow pull to refresh when at the top of the page
       if (window.scrollY === 0 && distance > 0) {
         e.preventDefault();
       }
@@ -94,10 +92,6 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
       const distance = touchEnd - touchStart;
       if (window.scrollY === 0 && distance > threshold) {
         await handleRefresh();
-        toast({
-          title: "Refreshed",
-          description: "Feed updated with latest posts",
-        });
       }
     };
 
