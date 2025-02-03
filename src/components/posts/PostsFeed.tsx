@@ -26,7 +26,8 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
             id,
             content,
             created_at,
-            profile:profile(name)
+            user_id,
+            profile:profile(name, bio, profile_picture)
           )
         `)
         .order("created_at", { ascending: false });
