@@ -73,6 +73,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent event bubbling
     if (!content.trim() && !selectedFile) return;
 
     setIsSubmitting(true);

@@ -73,7 +73,7 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
 
     let touchStart: number;
     let touchEnd: number;
-    const threshold = 100;
+    const threshold = 200; // Increased threshold for longer swipe
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStart = e.touches[0].clientY;
@@ -83,7 +83,7 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
       touchEnd = e.touches[0].clientY;
       const distance = touchEnd - touchStart;
       
-      if (window.scrollY === 0 && distance > 0) {
+      if (window.scrollY === 0 && distance > threshold) {
         e.preventDefault();
       }
     };
