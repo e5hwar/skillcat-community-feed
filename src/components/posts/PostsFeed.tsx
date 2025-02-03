@@ -50,6 +50,10 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
     }
   };
 
+  const handlePostDeleted = (deletedPostId: number) => {
+    setPosts(currentPosts => currentPosts.filter(post => post.id !== deletedPostId));
+  };
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -73,6 +77,7 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
               post={post}
               currentUserId={userId}
               onLikeUpdate={fetchPosts}
+              onPostDeleted={() => handlePostDeleted(post.id)}
             />
           ))
         )}
