@@ -139,16 +139,11 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                 setIsCommenting(true);
               }
             }}
-            className="min-h-[32px] w-full resize-none overflow-hidden"
+            className="min-h-[32px] w-full resize-none overflow-hidden p-3"
             style={{ 
               height: '32px',
               padding: '8px 16px',
-              lineHeight: '20px'
-            }}
-            onInput={(e) => {
-              const target = e.target as HTMLTextAreaElement;
-              target.style.height = '32px';
-              target.style.height = `${target.scrollHeight}px`;
+              lineHeight: '16px'
             }}
           />
           {isCommenting && commentText.trim() && (

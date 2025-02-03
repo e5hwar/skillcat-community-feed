@@ -157,16 +157,11 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
             placeholder="What's on your mind?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="min-h-[64px] w-full resize-none overflow-hidden"
+            className="min-h-[64px] w-full resize-none overflow-hidden p-4"
             style={{ 
               height: '64px',
               padding: '12px 16px',
               lineHeight: '20px'
-            }}
-            onInput={(e) => {
-              const target = e.target as HTMLTextAreaElement;
-              target.style.height = '64px';
-              target.style.height = `${target.scrollHeight}px`;
             }}
           />
           <input
