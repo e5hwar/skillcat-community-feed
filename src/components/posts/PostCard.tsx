@@ -77,6 +77,7 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
 
   const handleLike = async () => {
     if (!currentUserId) return;
+    if (isLiking) return; // Prevent multiple clicks while processing
     setIsLiking(true);
 
     try {
@@ -166,7 +167,7 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
               fill={hasLiked ? "#F47D57" : "none"} 
               stroke={hasLiked ? "#F47D57" : "currentColor"} 
             />
-            <span>{localLikesCount} {localLikesCount === 1 ? 'Like' : 'Likes'}</span>
+            <span>{localLikesCount > 0 ? `${localLikesCount} ${localLikesCount === 1 ? 'Like' : 'Likes'}` : 'Like'}</span>
           </Button>
           <Button variant="ghost" size="sm" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
