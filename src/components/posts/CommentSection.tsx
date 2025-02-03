@@ -1,34 +1,25 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { MoreVertical, Trash } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-interface Comment {
-  id: number;
-  content: string;
-  created_at: string;
-  user_id: string;
-  profile: {
-    name: string;
-    profile_picture: string | null;
-    bio: string | null;
-  };
-}
+import UserAvatar from "../shared/UserAvatar";
+import Comment from "./Comment";
 
 interface CommentSectionProps {
   postId: number;
   currentUserId: string;
-  comments: Comment[];
+  comments: {
+    id: number;
+    content: string;
+    created_at: string;
+    user_id: string;
+    profile: {
+      name: string;
+      profile_picture: string | null;
+      bio: string | null;
+    };
+  }[];
   onCommentAdded: () => void;
 }
 
@@ -39,7 +30,11 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [visibleComments, setVisibleComments] = useState(COMMENTS_PER_PAGE);
-  const [currentUserProfile, setCurrentUserProfile] = useState<{ name: string; profile_picture: string | null; bio: string | null } | null>(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState<{
+    name: string;
+    profile_picture: string | null;
+    bio: string | null;
+  } | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -59,11 +54,6 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       fetchCurrentUserProfile();
     }
   }, [currentUserId]);
-
-  // Sort comments by recency
-  const sortedComments = [...comments].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
 
   const handleComment = async () => {
     if (!commentText.trim()) return;
@@ -120,33 +110,21 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
     }
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word[0])
-      .join("")
-      .toUpperCase();
-  };
-
-  const getBgColor = (name: string) => {
-    const index = name.length % 7;
-    const PASTEL_COLORS = [
-      "bg-[#F2FCE2]", "bg-[#FEF7CD]", "bg-[#FEC6A1]", 
-      "bg-[#E5DEFF]", "bg-[#FFDEE2]", "bg-[#FDE1D3]", 
-      "bg-[#D3E4FD]"
-    ];
-    return PASTEL_COLORS[index];
-  };
+  // Sort comments by recency
+  const sortedComments = [...comments].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 
   return (
     <div className="space-y-4 w-full">
       <div className="flex items-start gap-3 w-full">
-        <Avatar className="h-8 w-8">
-          <AvatarImage src={currentUserProfile?.profile_picture || undefined} />
-          <AvatarFallback className={`${getBgColor(currentUserProfile?.name || '')} text-gray-600 text-xs font-bold`}>
-            {currentUserProfile?.name ? getInitials(currentUserProfile.name) : ''}
-          </AvatarFallback>
-        </Avatar>
+        {currentUserProfile && (
+          <UserAvatar
+            profilePicture={currentUserProfile.profile_picture}
+            name={currentUserProfile.name}
+            size="sm"
+          />
+        )}
         <div className="flex-1">
           <Textarea
             placeholder="Add a comment..."
@@ -186,53 +164,12 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
 
       <div className="space-y-4">
         {sortedComments.slice(0, visibleComments).map((comment) => (
-          <div key={comment.id} className="flex gap-3">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={comment.profile.profile_picture || undefined} />
-              <AvatarFallback className={`${getBgColor(comment.profile.name)} text-gray-600 text-xs font-bold`}>
-                {getInitials(comment.profile.name)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex justify-between items-start">
-                <div className="rounded-lg bg-gray-50 p-3 flex-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium">{comment.profile.name}</p>
-                      {comment.profile.bio && (
-                        <p className="text-xs text-gray-500">{comment.profile.bio}</p>
-                      )}
-                    </div>
-                    {currentUserId === comment.user_id && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-white">
-                          <DropdownMenuItem
-                            className="text-red-600 font-bold"
-                            onClick={() => handleDeleteComment(comment.id)}
-                          >
-                            <Trash className="h-4 w-4 mr-2" />
-                            Delete comment
-                            <span className="block text-xs text-gray-500 mt-1">
-                              This cannot be undone
-                            </span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">{comment.content}</p>
-                </div>
-              </div>
-              <p className="mt-1 text-xs text-gray-400">
-                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-              </p>
-            </div>
-          </div>
+          <Comment
+            key={comment.id}
+            comment={comment}
+            currentUserId={currentUserId}
+            onDelete={handleDeleteComment}
+          />
         ))}
       </div>
 

@@ -1,24 +1,14 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare, MoreVertical, Trash } from "lucide-react";
+import { Heart, MessageSquare } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import CommentSection from "./CommentSection";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-const PASTEL_COLORS = [
-  "bg-[#F2FCE2]", "bg-[#FEF7CD]", "bg-[#FEC6A1]", 
-  "bg-[#E5DEFF]", "bg-[#FFDEE2]", "bg-[#FDE1D3]", 
-  "bg-[#D3E4FD]"
-];
+import UserAvatar from "../shared/UserAvatar";
+import UserInfo from "../shared/UserInfo";
+import DeleteButton from "../shared/DeleteButton";
 
 interface PostCardProps {
   post: {
@@ -86,19 +76,6 @@ const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCard
     }
   }, [post.id, currentUserId]);
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase();
-  };
-
-  const getBgColor = (name: string) => {
-    const index = name.length % PASTEL_COLORS.length;
-    return PASTEL_COLORS[index];
-  };
-
   const handleLike = async () => {
     if (!currentUserId) return;
     if (isLiking) return;
@@ -163,43 +140,19 @@ const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCard
   return (
     <Card className="w-full bg-white shadow-sm">
       <CardHeader className="flex flex-row items-center gap-4">
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={post.profile.profile_picture || undefined} />
-          <AvatarFallback className={`${getBgColor(post.profile.name)} text-gray-600 text-sm font-bold`}>
-            {getInitials(post.profile.name)}
-          </AvatarFallback>
-        </Avatar>
+        <UserAvatar
+          profilePicture={post.profile.profile_picture}
+          name={post.profile.name}
+        />
         <div className="flex flex-col flex-1">
           <div className="flex justify-between items-start w-full">
-            <div>
-              <p className="font-medium text-gray-900">{post.profile.name}</p>
-              {post.profile.bio && (
-                <p className="text-sm text-gray-500">{post.profile.bio}</p>
-              )}
-              <p className="text-xs text-gray-400">
-                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-              </p>
-            </div>
+            <UserInfo
+              name={post.profile.name}
+              bio={post.profile.bio}
+              createdAt={formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+            />
             {currentUserId === post.user_id && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white">
-                  <DropdownMenuItem
-                    className="text-red-600 font-bold"
-                    onClick={handleDeletePost}
-                  >
-                    <Trash className="h-4 w-4 mr-2" />
-                    Delete post
-                    <span className="block text-xs text-gray-500 mt-1">
-                      This cannot be undone
-                    </span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <DeleteButton onDelete={handleDeletePost} type="post" />
             )}
           </div>
         </div>
