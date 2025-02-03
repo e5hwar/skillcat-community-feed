@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -143,7 +143,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       <div className="flex items-start gap-3 w-full">
         <Avatar className="h-8 w-8">
           <AvatarImage src={currentUserProfile?.profile_picture || undefined} />
-          <AvatarFallback className={`${getBgColor(currentUserProfile?.name || '')} text-gray-600 text-xs`}>
+          <AvatarFallback className={`${getBgColor(currentUserProfile?.name || '')} text-gray-600 text-xs font-bold`}>
             {currentUserProfile?.name ? getInitials(currentUserProfile.name) : ''}
           </AvatarFallback>
         </Avatar>
@@ -189,7 +189,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
           <div key={comment.id} className="flex gap-3">
             <Avatar className="h-8 w-8">
               <AvatarImage src={comment.profile.profile_picture || undefined} />
-              <AvatarFallback className={`${getBgColor(comment.profile.name)} text-gray-600 text-xs`}>
+              <AvatarFallback className={`${getBgColor(comment.profile.name)} text-gray-600 text-xs font-bold`}>
                 {getInitials(comment.profile.name)}
               </AvatarFallback>
             </Avatar>
@@ -212,10 +212,14 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-white">
                           <DropdownMenuItem
-                            className="text-red-600"
+                            className="text-red-600 font-bold"
                             onClick={() => handleDeleteComment(comment.id)}
                           >
+                            <Trash className="h-4 w-4 mr-2" />
                             Delete comment
+                            <span className="block text-xs font-normal text-red-500 mt-1">
+                              This cannot be undone
+                            </span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

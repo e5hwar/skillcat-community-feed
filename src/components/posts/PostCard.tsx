@@ -165,7 +165,7 @@ const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCard
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-10 w-10">
           <AvatarImage src={post.profile.profile_picture || undefined} />
-          <AvatarFallback className={`${getBgColor(post.profile.name)} text-gray-600 text-sm`}>
+          <AvatarFallback className={`${getBgColor(post.profile.name)} text-gray-600 text-sm font-bold`}>
             {getInitials(post.profile.name)}
           </AvatarFallback>
         </Avatar>
