@@ -118,11 +118,16 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                 setIsCommenting(true);
               }
             }}
-            className="min-h-[40px] w-full resize-none overflow-hidden"
-            style={{ height: 'auto' }}
+            className="min-h-[40px] w-full resize-none overflow-hidden py-2"
+            style={{ 
+              height: 'auto',
+              minHeight: '32px',
+              padding: '6px 12px',
+              lineHeight: '20px'
+            }}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement;
-              target.style.height = 'auto';
+              target.style.height = '32px';
               target.style.height = `${target.scrollHeight}px`;
             }}
           />
