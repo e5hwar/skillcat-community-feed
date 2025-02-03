@@ -31,6 +31,7 @@ interface PostCardProps {
       id: number;
       content: string;
       created_at: string;
+      user_id: string;
       profile: { 
         name: string;
         profile_picture: string | null;
