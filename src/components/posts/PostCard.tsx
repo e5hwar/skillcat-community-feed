@@ -23,6 +23,7 @@ const PASTEL_COLORS = [
 interface PostCardProps {
   post: {
     id: number;
+    user_id: string; // Added this line
     content: string;
     image_url?: string | null;
     video_url?: string | null;

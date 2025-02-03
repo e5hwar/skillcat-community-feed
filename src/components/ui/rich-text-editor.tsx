@@ -1,7 +1,8 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
 import { Button } from './button';
-import { Bold, Italic, Underline, List, ListOrdered } from 'lucide-react';
+import { Bold, Italic, Underline as UnderlineIcon, List, ListOrdered } from 'lucide-react';
 
 interface RichTextEditorProps {
   content: string;
@@ -12,7 +13,10 @@ interface RichTextEditorProps {
 
 const RichTextEditor = ({ content, onChange, minHeight = '64px', placeholder }: RichTextEditorProps) => {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      Underline
+    ],
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
@@ -52,7 +56,7 @@ const RichTextEditor = ({ content, onChange, minHeight = '64px', placeholder }: 
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           className={editor.isActive('underline') ? 'bg-muted' : ''}
         >
-          <Underline className="h-4 w-4" />
+          <UnderlineIcon className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
