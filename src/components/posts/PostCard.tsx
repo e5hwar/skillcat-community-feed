@@ -40,11 +40,22 @@ interface PostCardProps {
 const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
-  const [localLikesCount, setLocalLikesCount] = useState(post.likes?.length || 0);
+  const [localLikesCount, setLocalLikesCount] = useState(0); // Initialize to 0
   const { toast } = useToast();
 
   useEffect(() => {
     const checkIfUserLiked = async () => {
+      // Get the total likes count
+      const { data: likesData, error: likesError } = await supabase
+        .from("likes")
+        .select("id")
+        .eq("post_id", post.id);
+
+      if (!likesError) {
+        setLocalLikesCount(likesData.length);
+      }
+
+      // Check if current user has liked
       const { data, error } = await supabase
         .from("likes")
         .select("id")
