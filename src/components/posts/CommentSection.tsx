@@ -107,7 +107,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
         <Avatar className="h-8 w-8">
           <AvatarImage src={undefined} />
           <AvatarFallback className="bg-gray-100 text-gray-600">
-            ED
+            {getInitials("Example User")}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
@@ -120,15 +120,15 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                 setIsCommenting(true);
               }
             }}
-            className="min-h-[32px] w-full resize-none overflow-hidden py-2"
+            className="min-h-[64px] w-full resize-none overflow-hidden"
             style={{ 
-              height: '32px',
-              padding: '6px 12px',
+              height: '64px',
+              padding: '12px 16px',
               lineHeight: '20px'
             }}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement;
-              target.style.height = '32px';
+              target.style.height = '64px';
               target.style.height = `${target.scrollHeight}px`;
             }}
           />
