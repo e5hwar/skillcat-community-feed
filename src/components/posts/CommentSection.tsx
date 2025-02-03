@@ -109,13 +109,13 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start gap-3">
+    <div className="space-y-4 w-full">
+      <div className="flex items-start gap-3 w-full">
         <Avatar className="h-8 w-8 mt-1">
           <AvatarImage src={undefined} />
-          <AvatarFallback>U</AvatarFallback>
+          <AvatarFallback>{currentUserId ? getInitials(comments[0]?.profile?.name || 'U') : 'U'}</AvatarFallback>
         </Avatar>
-        <div className="flex-1">
+        <div className="flex-1 w-full">
           <Textarea
             placeholder="Add a comment..."
             value={commentText}
