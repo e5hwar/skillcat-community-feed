@@ -84,6 +84,10 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       setCommentText("");
       setIsCommenting(false);
       onCommentAdded();
+      toast({
+        title: "Success",
+        description: "Comment added successfully!",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -98,12 +102,15 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       const { error } = await supabase
         .from("comments")
         .delete()
-        .eq("id", commentId)
-        .eq("user_id", currentUserId);
+        .eq("id", commentId);
 
       if (error) throw error;
 
       onCommentAdded();
+      toast({
+        title: "Success",
+        description: "Comment deleted successfully!",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -122,7 +129,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
   };
 
   const getBgColor = (name: string) => {
-    const index = name.length % 7; // Assuming 7 pastel colors
+    const index = name.length % 7;
     const PASTEL_COLORS = [
       "bg-[#F2FCE2]", "bg-[#FEF7CD]", "bg-[#FEC6A1]", 
       "bg-[#E5DEFF]", "bg-[#FFDEE2]", "bg-[#FDE1D3]", 
@@ -136,7 +143,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       <div className="flex items-start gap-3 w-full">
         <Avatar className="h-8 w-8">
           <AvatarImage src={currentUserProfile?.profile_picture || undefined} />
-          <AvatarFallback className={`${getBgColor(currentUserProfile?.name || '')} text-gray-600`}>
+          <AvatarFallback className={`${getBgColor(currentUserProfile?.name || '')} text-gray-600 text-xs`}>
             {currentUserProfile?.name ? getInitials(currentUserProfile.name) : ''}
           </AvatarFallback>
         </Avatar>
@@ -182,7 +189,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
           <div key={comment.id} className="flex gap-3">
             <Avatar className="h-8 w-8">
               <AvatarImage src={comment.profile.profile_picture || undefined} />
-              <AvatarFallback className={`${getBgColor(comment.profile.name)} text-gray-600`}>
+              <AvatarFallback className={`${getBgColor(comment.profile.name)} text-gray-600 text-xs`}>
                 {getInitials(comment.profile.name)}
               </AvatarFallback>
             </Avatar>
@@ -214,7 +221,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                       </DropdownMenu>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600">{comment.content}</p>
+                  <p className="text-sm text-gray-600 mt-1">{comment.content}</p>
                 </div>
               </div>
               <p className="mt-1 text-xs text-gray-400">

@@ -1,12 +1,18 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare } from "lucide-react";
+import { Heart, MessageSquare, MoreVertical } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import CommentSection from "./CommentSection";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const PASTEL_COLORS = [
   "bg-[#F2FCE2]", "bg-[#FEF7CD]", "bg-[#FEC6A1]", 
@@ -21,6 +27,7 @@ interface PostCardProps {
     image_url?: string | null;
     video_url?: string | null;
     created_at: string;
+    user_id: string;
     profile: {
       name: string;
       bio: string | null;
@@ -41,9 +48,10 @@ interface PostCardProps {
   };
   currentUserId: string;
   onLikeUpdate?: () => void;
+  onPostDeleted?: () => void;
 }
 
-const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
+const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCardProps) => {
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
   const [localLikesCount, setLocalLikesCount] = useState(0);
@@ -52,7 +60,6 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
 
   useEffect(() => {
     const checkIfUserLiked = async () => {
-      // Get the total likes count
       const { data: likesData, error: likesError } = await supabase
         .from("likes")
         .select("id")
@@ -62,7 +69,6 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
         setLocalLikesCount(likesData.length);
       }
 
-      // Check if current user has liked
       const { data, error } = await supabase
         .from("likes")
         .select("id")
@@ -131,23 +137,67 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
     }
   };
 
+  const handleDeletePost = async () => {
+    try {
+      const { error } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", post.id);
+
+      if (error) throw error;
+
+      if (onPostDeleted) onPostDeleted();
+      toast({
+        title: "Success",
+        description: "Post deleted successfully!",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="w-full bg-white shadow-sm">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-10 w-10">
           <AvatarImage src={post.profile.profile_picture || undefined} />
-          <AvatarFallback className={`${getBgColor(post.profile.name)} text-gray-600`}>
+          <AvatarFallback className={`${getBgColor(post.profile.name)} text-gray-600 text-sm`}>
             {getInitials(post.profile.name)}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col">
-          <p className="font-medium text-gray-900">{post.profile.name}</p>
-          {post.profile.bio && (
-            <p className="text-sm text-gray-500">{post.profile.bio}</p>
-          )}
-          <p className="text-xs text-gray-400">
-            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-          </p>
+        <div className="flex flex-col flex-1">
+          <div className="flex justify-between items-start w-full">
+            <div>
+              <p className="font-medium text-gray-900">{post.profile.name}</p>
+              {post.profile.bio && (
+                <p className="text-sm text-gray-500">{post.profile.bio}</p>
+              )}
+              <p className="text-xs text-gray-400">
+                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+              </p>
+            </div>
+            {currentUserId === post.user_id && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white">
+                  <DropdownMenuItem
+                    className="text-red-600"
+                    onClick={handleDeletePost}
+                  >
+                    Delete post
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
