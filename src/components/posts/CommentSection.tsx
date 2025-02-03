@@ -64,10 +64,6 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       setCommentText("");
       setIsCommenting(false);
       onCommentAdded();
-      
-      toast({
-        description: "Comment added successfully",
-      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -88,9 +84,6 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       if (error) throw error;
 
       onCommentAdded();
-      toast({
-        description: "Comment deleted successfully",
-      });
     } catch (error: any) {
       toast({
         title: "Error",
