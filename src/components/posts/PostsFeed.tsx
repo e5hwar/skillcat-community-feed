@@ -60,8 +60,8 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <header className="py-6 mb-6 text-center border-b">
-        <h1 className="text-2xl font-bold text-gray-900">Community</h1>
+      <header className="flex justify-end py-2 mb-4">
+        <h1 className="text-lg font-semibold text-gray-900">Community</h1>
       </header>
       <div className="space-y-6">
         <CreatePost userId={userId} onPostCreated={fetchPosts} />

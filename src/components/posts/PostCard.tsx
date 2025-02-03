@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, MessageSquare } from "lucide-react";
+import { Heart, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -127,12 +127,12 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
             disabled={isLiking}
             className="flex items-center gap-2"
           >
-            <ThumbsUp className="h-4 w-4" />
-            <span>{likesCount} Likes</span>
+            <Heart className="h-4 w-4" fill={likesCount > 0 ? "#F47D57" : "none"} stroke={likesCount > 0 ? "#F47D57" : "currentColor"} />
+            <span>{likesCount} {likesCount === 1 ? 'Like' : 'Likes'}</span>
           </Button>
           <Button variant="ghost" size="sm" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
-            <span>{commentsCount} Comments</span>
+            <span>{commentsCount} {commentsCount === 1 ? 'Comment' : 'Comments'}</span>
           </Button>
         </div>
         {topComment && (
