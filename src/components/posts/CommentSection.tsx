@@ -78,8 +78,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       const { error } = await supabase
         .from("comments")
         .delete()
-        .eq("id", commentId)
-        .eq("user_id", currentUserId);
+        .eq("id", commentId);
 
       if (error) throw error;
 
@@ -106,7 +105,9 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       <div className="flex items-start gap-3 w-full">
         <Avatar className="h-8 w-8">
           <AvatarImage src={undefined} />
-          <AvatarFallback>{getInitials(comments[0]?.profile?.name || currentUserId)}</AvatarFallback>
+          <AvatarFallback className="bg-gray-100 text-gray-600">
+            {getInitials(comments[0]?.profile?.name || "User")}
+          </AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <Textarea
@@ -118,10 +119,9 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                 setIsCommenting(true);
               }
             }}
-            className="min-h-[40px] w-full resize-none overflow-hidden py-2"
+            className="min-h-[32px] w-full resize-none overflow-hidden py-2"
             style={{ 
-              height: 'auto',
-              minHeight: '32px',
+              height: '32px',
               padding: '6px 12px',
               lineHeight: '20px'
             }}
@@ -156,7 +156,9 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
           <div key={comment.id} className="flex gap-3">
             <Avatar className="h-8 w-8">
               <AvatarImage src={comment.profile.profile_picture || undefined} />
-              <AvatarFallback>{getInitials(comment.profile.name)}</AvatarFallback>
+              <AvatarFallback className="bg-gray-100 text-gray-600">
+                {getInitials(comment.profile.name)}
+              </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="flex justify-between items-start">
@@ -170,7 +172,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="bg-white">
                           <DropdownMenuItem
                             className="text-red-600"
                             onClick={() => handleDeleteComment(comment.id)}
