@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Image, Video, Loader2, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
@@ -49,24 +49,28 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `${userId}/${fileName}`;
 
-    // Upload the file and manually track progress
-    const chunkSize = 1024 * 1024; // 1MB chunks
-    const totalSize = file.size;
-    let uploadedSize = 0;
+    setUploadProgress(10); // Start progress
 
-    const { error: uploadError } = await supabase.storage
-      .from('posts')
-      .upload(filePath, file, {
-        upsert: false
-      });
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from('posts')
+        .upload(filePath, file, {
+          upsert: false
+        });
 
-    if (uploadError) throw uploadError;
+      if (uploadError) throw uploadError;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('posts')
-      .getPublicUrl(filePath);
+      setUploadProgress(70); // Update progress after upload
 
-    return publicUrl;
+      const { data: { publicUrl } } = supabase.storage
+        .from('posts')
+        .getPublicUrl(filePath);
+
+      setUploadProgress(100); // Complete progress
+      return publicUrl;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,9 +117,10 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "Unable to upload your post. If the issues persists, write to us at info@skillcatapp.com",
         variant: "destructive",
       });
+      console.error("Post creation error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -135,6 +140,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
               padding: '12px 16px',
               lineHeight: '20px'
             }}
+            disabled={isSubmitting}
           />
           <input
             type="file"
@@ -142,6 +148,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
             onChange={handleFileSelect}
             accept="image/*,video/*"
             className="hidden"
+            disabled={isSubmitting}
           />
           
           {/* Media Preview */}
@@ -153,6 +160,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
                 size="icon"
                 className="absolute top-2 right-2 h-6 w-6 bg-gray-500 hover:bg-gray-600"
                 onClick={removeSelectedFile}
+                disabled={isSubmitting}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -195,7 +203,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
           <Button 
             type="submit" 
             disabled={isSubmitting || (!content.trim() && !selectedFile)}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 relative"
           >
             {isSubmitting ? (
               <>
