@@ -5,11 +5,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Comment {
   id: number;
   content: string;
   created_at: string;
+  user_id: string;
   profile: {
     name: string;
     profile_picture: string | null;
@@ -69,6 +77,29 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
     }
   };
 
+  const handleDeleteComment = async (commentId: number) => {
+    try {
+      const { error } = await supabase
+        .from("comments")
+        .delete()
+        .eq("id", commentId)
+        .eq("user_id", currentUserId);
+
+      if (error) throw error;
+
+      onCommentAdded();
+      toast({
+        description: "Comment deleted successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -79,40 +110,42 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
 
   return (
     <div className="space-y-4">
-      {isCommenting ? (
-        <div className="space-y-2">
+      <div className="flex items-start gap-3">
+        <Avatar className="h-8 w-8 mt-1">
+          <AvatarImage src={undefined} />
+          <AvatarFallback>U</AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
           <Textarea
-            placeholder="Write a comment..."
+            placeholder="Add a comment..."
             value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            className="min-h-[80px]"
+            onChange={(e) => {
+              setCommentText(e.target.value);
+              if (!isCommenting && e.target.value.trim()) {
+                setIsCommenting(true);
+              }
+            }}
+            className="min-h-[80px] w-full"
           />
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setIsCommenting(false);
-                setCommentText("");
-              }}
-            >
-              Cancel
-            </Button>
-            <Button size="sm" onClick={handleComment}>
-              Comment
-            </Button>
-          </div>
+          {isCommenting && commentText.trim() && (
+            <div className="flex justify-end gap-2 mt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setIsCommenting(false);
+                  setCommentText("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button size="sm" onClick={handleComment}>
+                Comment
+              </Button>
+            </div>
+          )}
         </div>
-      ) : (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-2"
-          onClick={() => setIsCommenting(true)}
-        >
-          Add a comment...
-        </Button>
-      )}
+      </div>
 
       <div className="space-y-4">
         {sortedComments.slice(0, visibleComments).map((comment) => (
@@ -122,9 +155,30 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
               <AvatarFallback>{getInitials(comment.profile.name)}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <div className="rounded-lg bg-gray-50 p-3">
-                <p className="text-sm font-medium">{comment.profile.name}</p>
-                <p className="text-sm text-gray-600">{comment.content}</p>
+              <div className="flex justify-between items-start">
+                <div className="rounded-lg bg-gray-50 p-3 flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium">{comment.profile.name}</p>
+                    {comment.user_id === currentUserId && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => handleDeleteComment(comment.id)}
+                          >
+                            Delete comment
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600">{comment.content}</p>
+                </div>
               </div>
               <p className="mt-1 text-xs text-gray-400">
                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
