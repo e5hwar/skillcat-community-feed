@@ -21,6 +21,7 @@ interface Comment {
   profile: {
     name: string;
     profile_picture: string | null;
+    bio: string | null;
   };
 }
 
@@ -38,14 +39,14 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [visibleComments, setVisibleComments] = useState(COMMENTS_PER_PAGE);
-  const [currentUserProfile, setCurrentUserProfile] = useState<{ name: string; profile_picture: string | null } | null>(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState<{ name: string; profile_picture: string | null; bio: string | null } | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchCurrentUserProfile = async () => {
       const { data, error } = await supabase
         .from('profile')
-        .select('name, profile_picture')
+        .select('name, profile_picture, bio')
         .eq('id', currentUserId)
         .single();
 
@@ -120,12 +121,22 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       .toUpperCase();
   };
 
+  const getBgColor = (name: string) => {
+    const index = name.length % 7; // Assuming 7 pastel colors
+    const PASTEL_COLORS = [
+      "bg-[#F2FCE2]", "bg-[#FEF7CD]", "bg-[#FEC6A1]", 
+      "bg-[#E5DEFF]", "bg-[#FFDEE2]", "bg-[#FDE1D3]", 
+      "bg-[#D3E4FD]"
+    ];
+    return PASTEL_COLORS[index];
+  };
+
   return (
     <div className="space-y-4 w-full">
       <div className="flex items-start gap-3 w-full">
         <Avatar className="h-8 w-8">
           <AvatarImage src={currentUserProfile?.profile_picture || undefined} />
-          <AvatarFallback className="bg-gray-100 text-gray-600">
+          <AvatarFallback className={`${getBgColor(currentUserProfile?.name || '')} text-gray-600`}>
             {currentUserProfile?.name ? getInitials(currentUserProfile.name) : ''}
           </AvatarFallback>
         </Avatar>
@@ -171,7 +182,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
           <div key={comment.id} className="flex gap-3">
             <Avatar className="h-8 w-8">
               <AvatarImage src={comment.profile.profile_picture || undefined} />
-              <AvatarFallback className="bg-gray-100 text-gray-600">
+              <AvatarFallback className={`${getBgColor(comment.profile.name)} text-gray-600`}>
                 {getInitials(comment.profile.name)}
               </AvatarFallback>
             </Avatar>
@@ -179,7 +190,12 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
               <div className="flex justify-between items-start">
                 <div className="rounded-lg bg-gray-50 p-3 flex-1">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">{comment.profile.name}</p>
+                    <div>
+                      <p className="text-sm font-medium">{comment.profile.name}</p>
+                      {comment.profile.bio && (
+                        <p className="text-xs text-gray-500">{comment.profile.bio}</p>
+                      )}
+                    </div>
                     {currentUserId === comment.user_id && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

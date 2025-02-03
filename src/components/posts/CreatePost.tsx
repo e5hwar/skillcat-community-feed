@@ -179,7 +179,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
                 type="button"
                 variant="destructive"
                 size="icon"
-                className="absolute top-2 right-2 h-6 w-6"
+                className="absolute top-2 right-2 h-6 w-6 bg-gray-500 hover:bg-gray-600"
                 onClick={removeSelectedFile}
               >
                 <X className="h-4 w-4" />
