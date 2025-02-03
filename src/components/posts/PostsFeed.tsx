@@ -60,9 +60,6 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <header className="flex justify-end py-2 mb-4">
-        <h1 className="text-lg font-semibold text-gray-900">Community</h1>
-      </header>
       <div className="space-y-6">
         <CreatePost userId={userId} onPostCreated={fetchPosts} />
         {posts.length === 0 ? (

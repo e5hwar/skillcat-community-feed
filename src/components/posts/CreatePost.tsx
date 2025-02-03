@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Image, Video, Loader2 } from "lucide-react";
+import { Image, Video, Loader2, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 interface CreatePostProps {
@@ -32,6 +32,15 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
       
       // Clean up previous preview URL when component unmounts
       return () => URL.revokeObjectURL(url);
+    }
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setUploadProgress(0);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -148,7 +157,17 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
             placeholder="What's on your mind?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="min-h-[100px] resize-none"
+            className="min-h-[32px] w-full resize-none overflow-hidden"
+            style={{ 
+              height: '32px',
+              padding: '6px 12px',
+              lineHeight: '20px'
+            }}
+            onInput={(e) => {
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = '32px';
+              target.style.height = `${target.scrollHeight}px`;
+            }}
           />
           <input
             type="file"
@@ -160,18 +179,29 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
           
           {/* Media Preview */}
           {previewUrl && selectedFile && (
-            <div className="relative rounded-lg overflow-hidden bg-gray-100">
+            <div className="relative rounded-lg overflow-hidden bg-gray-100 inline-block">
+              <Button
+                type="button"
+                variant="destructive"
+                size="icon"
+                className="absolute top-2 right-2 h-6 w-6"
+                onClick={removeSelectedFile}
+              >
+                <X className="h-4 w-4" />
+              </Button>
               {selectedFile.type.startsWith('image/') ? (
                 <img 
                   src={previewUrl} 
                   alt="Preview" 
-                  className="w-full h-auto object-contain max-h-[300px]"
+                  className="w-auto h-auto object-contain"
+                  style={{ maxHeight: '100px' }}
                 />
               ) : (
                 <video 
                   src={previewUrl} 
                   controls 
-                  className="w-full h-auto object-contain max-h-[300px]"
+                  className="w-auto h-auto object-contain"
+                  style={{ maxHeight: '100px' }}
                 />
               )}
               {uploadProgress > 0 && uploadProgress < 100 && (
