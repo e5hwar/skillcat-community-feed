@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { MoreVertical } from "lucide-react";
-import RichTextEditor from "@/components/ui/rich-text-editor";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -136,16 +136,26 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       <div className="flex items-start gap-3 w-full">
         <Avatar className="h-8 w-8">
           <AvatarImage src={currentUserProfile?.profile_picture || undefined} />
-          <AvatarFallback className={`${getBgColor(currentUserProfile?.name || '')} text-gray-600 text-xs`}>
+          <AvatarFallback className={`${getBgColor(currentUserProfile?.name || '')} text-gray-600`}>
             {currentUserProfile?.name ? getInitials(currentUserProfile.name) : ''}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <RichTextEditor
-            content={commentText}
-            onChange={setCommentText}
-            minHeight="32px"
+          <Textarea
             placeholder="Add a comment..."
+            value={commentText}
+            onChange={(e) => {
+              setCommentText(e.target.value);
+              if (!isCommenting && e.target.value.trim()) {
+                setIsCommenting(true);
+              }
+            }}
+            className="min-h-[32px] w-full resize-none overflow-hidden p-3"
+            style={{ 
+              height: '32px',
+              padding: '8px 16px',
+              lineHeight: '16px'
+            }}
           />
           {isCommenting && commentText.trim() && (
             <div className="flex justify-end gap-2 mt-2">
@@ -172,7 +182,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
           <div key={comment.id} className="flex gap-3">
             <Avatar className="h-8 w-8">
               <AvatarImage src={comment.profile.profile_picture || undefined} />
-              <AvatarFallback className={`${getBgColor(comment.profile.name)} text-gray-600 text-xs`}>
+              <AvatarFallback className={`${getBgColor(comment.profile.name)} text-gray-600`}>
                 {getInitials(comment.profile.name)}
               </AvatarFallback>
             </Avatar>
@@ -204,10 +214,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                       </DropdownMenu>
                     )}
                   </div>
-                  <div 
-                    className="text-sm text-gray-600 prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: comment.content }}
-                  />
+                  <p className="text-sm text-gray-600">{comment.content}</p>
                 </div>
               </div>
               <p className="mt-1 text-xs text-gray-400">

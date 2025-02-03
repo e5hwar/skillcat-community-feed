@@ -1,18 +1,12 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare, MoreVertical } from "lucide-react";
+import { Heart, MessageSquare } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import CommentSection from "./CommentSection";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const PASTEL_COLORS = [
   "bg-[#F2FCE2]", "bg-[#FEF7CD]", "bg-[#FEC6A1]", 
@@ -23,7 +17,6 @@ const PASTEL_COLORS = [
 interface PostCardProps {
   post: {
     id: number;
-    user_id: string; // Added this line
     content: string;
     image_url?: string | null;
     video_url?: string | null;
@@ -138,75 +131,27 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
     }
   };
 
-  const handleDeletePost = async () => {
-    try {
-      const { error } = await supabase
-        .from("posts")
-        .delete()
-        .eq("id", post.id)
-        .eq("user_id", currentUserId);
-
-      if (error) throw error;
-
-      if (onLikeUpdate) onLikeUpdate();
-      toast({
-        title: "Success",
-        description: "Post deleted successfully",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <Card className="w-full bg-white shadow-sm">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="h-10 w-10">
           <AvatarImage src={post.profile.profile_picture || undefined} />
-          <AvatarFallback className={`${getBgColor(post.profile.name)} text-gray-600 text-sm`}>
+          <AvatarFallback className={`${getBgColor(post.profile.name)} text-gray-600`}>
             {getInitials(post.profile.name)}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col flex-1">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium text-gray-900">{post.profile.name}</p>
-              {post.profile.bio && (
-                <p className="text-sm text-gray-500">{post.profile.bio}</p>
-              )}
-              <p className="text-xs text-gray-400">
-                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-              </p>
-            </div>
-            {currentUserId === post.user_id && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white">
-                  <DropdownMenuItem
-                    className="text-red-600"
-                    onClick={handleDeletePost}
-                  >
-                    Delete post
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
+        <div className="flex flex-col">
+          <p className="font-medium text-gray-900">{post.profile.name}</p>
+          {post.profile.bio && (
+            <p className="text-sm text-gray-500">{post.profile.bio}</p>
+          )}
+          <p className="text-xs text-gray-400">
+            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+          </p>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div 
-          className="text-gray-800 whitespace-pre-wrap prose prose-sm max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
         {post.image_url && (
           <img
             src={post.image_url}

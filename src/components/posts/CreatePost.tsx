@@ -1,17 +1,11 @@
 import { useState, useRef } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Image, Video, Loader2, X, MoreVertical } from "lucide-react";
+import { Image, Video, Loader2, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import RichTextEditor from "@/components/ui/rich-text-editor";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface CreatePostProps {
   userId: string;
@@ -159,11 +153,16 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
     <Card className="w-full bg-white shadow-sm">
       <form onSubmit={handleSubmit}>
         <CardContent className="pt-6 space-y-4">
-          <RichTextEditor
-            content={content}
-            onChange={setContent}
-            minHeight="64px"
+          <Textarea
             placeholder="What's on your mind?"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[64px] w-full resize-none overflow-hidden p-4"
+            style={{ 
+              height: '64px',
+              padding: '12px 16px',
+              lineHeight: '20px'
+            }}
           />
           <input
             type="file"
@@ -173,6 +172,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
             className="hidden"
           />
           
+          {/* Media Preview */}
           {previewUrl && selectedFile && (
             <div className="relative rounded-lg overflow-hidden bg-gray-100 inline-block">
               <Button
