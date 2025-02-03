@@ -12,7 +12,6 @@ interface PostsFeedProps {
 const PostsFeed = ({ userId }: PostsFeedProps) => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -51,7 +50,6 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
       });
     } finally {
       setLoading(false);
-      setIsRefreshing(false);
     }
   };
 
@@ -59,52 +57,9 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
     setPosts(currentPosts => currentPosts.filter(post => post.id !== deletedPostId));
   };
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await fetchPosts();
-  };
-
   useEffect(() => {
     fetchPosts();
   }, []);
-
-  useEffect(() => {
-    if (!isMobile) return;
-
-    let touchStart: number;
-    let touchEnd: number;
-    const threshold = 200; // Increased threshold for longer swipe
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStart = e.touches[0].clientY;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      touchEnd = e.touches[0].clientY;
-      const distance = touchEnd - touchStart;
-      
-      if (window.scrollY === 0 && distance > threshold) {
-        e.preventDefault();
-      }
-    };
-
-    const handleTouchEnd = async () => {
-      const distance = touchEnd - touchStart;
-      if (window.scrollY === 0 && distance > threshold) {
-        await handleRefresh();
-      }
-    };
-
-    document.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isMobile]);
 
   if (loading) {
     return <div className="text-center p-4">Loading posts...</div>;
@@ -112,11 +67,6 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      {isRefreshing && (
-        <div className="text-center py-2 text-sm text-gray-500">
-          Refreshing...
-        </div>
-      )}
       <div className="space-y-6">
         <CreatePost userId={userId} onPostCreated={fetchPosts} />
         {posts.length === 0 ? (
