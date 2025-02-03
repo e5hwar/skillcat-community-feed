@@ -30,7 +30,7 @@ const Comment = ({ comment, currentUserId, onDelete }: CommentProps) => {
       <div className="flex-1">
         <div className="flex justify-between items-start">
           <div className="rounded-lg bg-gray-50 p-3 flex-1">
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between">
               <UserInfo
                 name={comment.profile.name}
                 bio={comment.profile.bio}

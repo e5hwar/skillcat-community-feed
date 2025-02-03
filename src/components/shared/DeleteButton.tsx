@@ -23,10 +23,10 @@ const DeleteButton = ({ onDelete, type }: DeleteButtonProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-white">
         <DropdownMenuItem
-          className="text-red-600 flex flex-col items-start"
+          className="flex flex-col items-start gap-1 p-2"
           onClick={onDelete}
         >
-          <div className="flex items-center font-bold">
+          <div className="flex items-center font-semibold">
             <Trash className="h-4 w-4 mr-2" />
             Delete
           </div>
