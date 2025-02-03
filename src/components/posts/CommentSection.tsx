@@ -78,8 +78,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
       const { error } = await supabase
         .from("comments")
         .delete()
-        .eq("id", commentId)
-        .eq("user_id", currentUserId);
+        .eq("id", commentId);
 
       if (error) throw error;
 
@@ -104,11 +103,11 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
   return (
     <div className="space-y-4 w-full">
       <div className="flex items-start gap-3 w-full">
-        <Avatar className="h-8 w-8 mt-1">
+        <Avatar className="h-8 w-8">
           <AvatarImage src={undefined} />
-          <AvatarFallback>{currentUserId ? getInitials(comments[0]?.profile?.name || 'U') : 'U'}</AvatarFallback>
+          <AvatarFallback>{getInitials(comments[0]?.profile?.name || 'U')}</AvatarFallback>
         </Avatar>
-        <div className="flex-1 w-full">
+        <div className="flex-1">
           <Textarea
             placeholder="Add a comment..."
             value={commentText}
@@ -118,7 +117,13 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                 setIsCommenting(true);
               }
             }}
-            className="min-h-[80px] w-full"
+            className="min-h-[40px] w-full resize-none overflow-hidden"
+            style={{ height: 'auto' }}
+            onInput={(e) => {
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = 'auto';
+              target.style.height = `${target.scrollHeight}px`;
+            }}
           />
           {isCommenting && commentText.trim() && (
             <div className="flex justify-end gap-2 mt-2">
@@ -152,7 +157,7 @@ const CommentSection = ({ postId, currentUserId, comments, onCommentAdded }: Com
                 <div className="rounded-lg bg-gray-50 p-3 flex-1">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium">{comment.profile.name}</p>
-                    {comment.user_id === currentUserId && (
+                    {currentUserId === comment.user_id && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
