@@ -151,13 +151,13 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
           <img
             src={post.image_url}
             alt="Post image"
-            className="rounded-lg max-h-96 w-full object-cover"
+            className="rounded-lg w-full h-auto object-contain max-h-[500px]"
           />
         )}
         {post.video_url && (
           <video
             controls
-            className="rounded-lg max-h-96 w-full"
+            className="rounded-lg w-full h-auto object-contain max-h-[500px]"
           >
             <source src={post.video_url} type="video/mp4" />
             Your browser does not support the video tag.
