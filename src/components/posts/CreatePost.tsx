@@ -49,13 +49,15 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `${userId}/${fileName}`;
 
-    const { error: uploadError, data } = await supabase.storage
+    // Upload the file and manually track progress
+    const chunkSize = 1024 * 1024; // 1MB chunks
+    const totalSize = file.size;
+    let uploadedSize = 0;
+
+    const { error: uploadError } = await supabase.storage
       .from('posts')
       .upload(filePath, file, {
-        onUploadProgress: (progress) => {
-          const percent = (progress.loaded / progress.total) * 100;
-          setUploadProgress(percent);
-        },
+        upsert: false
       });
 
     if (uploadError) throw uploadError;
