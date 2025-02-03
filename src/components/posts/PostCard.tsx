@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare, MoreVertical } from "lucide-react";
+import { Heart, MessageSquare, MoreVertical, Trash } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -189,10 +189,14 @@ const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCard
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-white">
                   <DropdownMenuItem
-                    className="text-red-600"
+                    className="text-red-600 font-bold"
                     onClick={handleDeletePost}
                   >
+                    <Trash className="h-4 w-4 mr-2" />
                     Delete post
+                    <span className="block text-xs font-normal text-red-500 mt-1">
+                      This cannot be undone
+                    </span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
