@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
+import CommentSection from "./CommentSection";
 
 const PASTEL_COLORS = [
   "bg-[#F2FCE2]", "bg-[#FEF7CD]", "bg-[#FEC6A1]", 
@@ -30,7 +31,10 @@ interface PostCardProps {
       id: number;
       content: string;
       created_at: string;
-      profile: { name: string };
+      profile: { 
+        name: string;
+        profile_picture: string | null;
+      };
     }[];
   };
   currentUserId: string;
@@ -40,7 +44,8 @@ interface PostCardProps {
 const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
-  const [localLikesCount, setLocalLikesCount] = useState(0); // Initialize to 0
+  const [localLikesCount, setLocalLikesCount] = useState(0);
+  const [showComments, setShowComments] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -88,7 +93,7 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
 
   const handleLike = async () => {
     if (!currentUserId) return;
-    if (isLiking) return; // Prevent multiple clicks while processing
+    if (isLiking) return;
     setIsLiking(true);
 
     try {
@@ -123,8 +128,6 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
       setIsLiking(false);
     }
   };
-
-  const commentsCount = post.comments?.length || 0;
 
   return (
     <Card className="w-full bg-white shadow-sm">
@@ -178,21 +181,33 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
               fill={hasLiked ? "#F47D57" : "none"} 
               stroke={hasLiked ? "#F47D57" : "currentColor"} 
             />
-            <span>{localLikesCount > 0 ? `${localLikesCount} ${localLikesCount === 1 ? 'Like' : 'Likes'}` : 'Like'}</span>
+            <span>
+              {localLikesCount > 0 
+                ? `${localLikesCount} ${localLikesCount === 1 ? 'Like' : 'Likes'}` 
+                : 'Like'}
+            </span>
           </Button>
-          <Button variant="ghost" size="sm" className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="flex items-center gap-2"
+            onClick={() => setShowComments(!showComments)}
+          >
             <MessageSquare className="h-4 w-4" />
-            <span>{commentsCount} {commentsCount === 1 ? 'Comment' : 'Comments'}</span>
+            <span>
+              {post.comments.length > 0 
+                ? `${post.comments.length} ${post.comments.length === 1 ? 'Comment' : 'Comments'}` 
+                : 'Comment'}
+            </span>
           </Button>
         </div>
-        {post.comments?.[0] && (
-          <div className="w-full p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm font-medium text-gray-900">{post.comments[0].profile.name}</p>
-            <p className="text-sm text-gray-600">{post.comments[0].content}</p>
-            <p className="text-xs text-gray-400 mt-1">
-              {formatDistanceToNow(new Date(post.comments[0].created_at), { addSuffix: true })}
-            </p>
-          </div>
+        {showComments && (
+          <CommentSection
+            postId={post.id}
+            currentUserId={currentUserId}
+            comments={post.comments}
+            onCommentAdded={onLikeUpdate}
+          />
         )}
       </CardFooter>
     </Card>
