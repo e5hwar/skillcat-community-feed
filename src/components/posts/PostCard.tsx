@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageSquare } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -39,7 +39,28 @@ interface PostCardProps {
 
 const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
   const [isLiking, setIsLiking] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [localLikesCount, setLocalLikesCount] = useState(post.likes?.length || 0);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const checkIfUserLiked = async () => {
+      const { data, error } = await supabase
+        .from("likes")
+        .select("id")
+        .eq("post_id", post.id)
+        .eq("user_id", currentUserId)
+        .single();
+
+      if (!error && data) {
+        setHasLiked(true);
+      }
+    };
+
+    if (currentUserId) {
+      checkIfUserLiked();
+    }
+  }, [post.id, currentUserId]);
 
   const getInitials = (name: string) => {
     return name
@@ -59,11 +80,26 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
     setIsLiking(true);
 
     try {
-      const { error } = await supabase
-        .from("likes")
-        .insert([{ post_id: post.id, user_id: currentUserId }]);
+      if (!hasLiked) {
+        const { error } = await supabase
+          .from("likes")
+          .insert([{ post_id: post.id, user_id: currentUserId }]);
 
-      if (error) throw error;
+        if (error) throw error;
+        setHasLiked(true);
+        setLocalLikesCount(prev => prev + 1);
+      } else {
+        const { error } = await supabase
+          .from("likes")
+          .delete()
+          .eq("post_id", post.id)
+          .eq("user_id", currentUserId);
+
+        if (error) throw error;
+        setHasLiked(false);
+        setLocalLikesCount(prev => prev - 1);
+      }
+
       if (onLikeUpdate) onLikeUpdate();
     } catch (error: any) {
       toast({
@@ -76,8 +112,6 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
     }
   };
 
-  const topComment = post.comments?.[0];
-  const likesCount = post.likes?.length || 0;
   const commentsCount = post.comments?.length || 0;
 
   return (
@@ -127,20 +161,24 @@ const PostCard = ({ post, currentUserId, onLikeUpdate }: PostCardProps) => {
             disabled={isLiking}
             className="flex items-center gap-2"
           >
-            <Heart className="h-4 w-4" fill={likesCount > 0 ? "#F47D57" : "none"} stroke={likesCount > 0 ? "#F47D57" : "currentColor"} />
-            <span>{likesCount} {likesCount === 1 ? 'Like' : 'Likes'}</span>
+            <Heart 
+              className="h-4 w-4" 
+              fill={hasLiked ? "#F47D57" : "none"} 
+              stroke={hasLiked ? "#F47D57" : "currentColor"} 
+            />
+            <span>{localLikesCount} {localLikesCount === 1 ? 'Like' : 'Likes'}</span>
           </Button>
           <Button variant="ghost" size="sm" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
             <span>{commentsCount} {commentsCount === 1 ? 'Comment' : 'Comments'}</span>
           </Button>
         </div>
-        {topComment && (
+        {post.comments?.[0] && (
           <div className="w-full p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm font-medium text-gray-900">{topComment.profile.name}</p>
-            <p className="text-sm text-gray-600">{topComment.content}</p>
+            <p className="text-sm font-medium text-gray-900">{post.comments[0].profile.name}</p>
+            <p className="text-sm text-gray-600">{post.comments[0].content}</p>
             <p className="text-xs text-gray-400 mt-1">
-              {formatDistanceToNow(new Date(topComment.created_at), { addSuffix: true })}
+              {formatDistanceToNow(new Date(post.comments[0].created_at), { addSuffix: true })}
             </p>
           </div>
         )}
