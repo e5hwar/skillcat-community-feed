@@ -23,12 +23,14 @@ const DeleteButton = ({ onDelete, type }: DeleteButtonProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-white">
         <DropdownMenuItem
-          className="text-red-600"
+          className="text-red-600 flex flex-col items-start"
           onClick={onDelete}
         >
-          <Trash className="h-4 w-4 mr-2" />
-          Delete
-          <span className="block text-xs text-gray-500 mt-1">
+          <div className="flex items-center font-bold">
+            <Trash className="h-4 w-4 mr-2" />
+            Delete
+          </div>
+          <span className="text-xs text-gray-500">
             This cannot be undone
           </span>
         </DropdownMenuItem>
