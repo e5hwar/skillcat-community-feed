@@ -61,7 +61,7 @@ const ChannelDetails = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="ml-1 h-14 w-14"
+              className="h-14 w-14"
               onClick={() => navigate("/")}
             >
               <ChevronLeft className="h-10 w-10 stroke-2" />
