@@ -116,17 +116,20 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
         >
           All Posts
         </Button>
-        {channels.map((channel) => (
-          <Button
-            key={channel.id}
-            variant={selectedChannel === channel.id ? "default" : "outline"}
-            onClick={() => setSelectedChannel(channel.id)}
-            className="rounded-full"
-            title={channel.description || undefined}
-          >
-            {channel.name}
-          </Button>
-        ))}
+        {channels.map((channel) => {
+          const hasNoPosts = !posts.some(post => post.channel_id === channel.id);
+          return (
+            <Button
+              key={channel.id}
+              variant={selectedChannel === channel.id ? "default" : "outline"}
+              onClick={() => setSelectedChannel(channel.id)}
+              className={`rounded-full ${hasNoPosts ? 'opacity-60' : ''}`}
+              title={channel.description || undefined}
+            >
+              {channel.name} {hasNoPosts && '(No posts yet)'}
+            </Button>
+          );
+        })}
       </div>
 
       <div className="space-y-6">
