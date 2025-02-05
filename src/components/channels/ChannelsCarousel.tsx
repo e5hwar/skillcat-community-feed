@@ -7,9 +7,11 @@ import {
 } from "@/components/ui/carousel";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 import ChannelCard from "./ChannelCard";
 
 const ChannelsCarousel = () => {
+  const isMobile = useIsMobile();
   const { data: channels, isLoading } = useQuery({
     queryKey: ["channels"],
     queryFn: async () => {
@@ -29,7 +31,7 @@ const ChannelsCarousel = () => {
 
   return (
     <Carousel 
-      className="w-full max-w-5xl mx-auto"
+      className="w-full max-w-5xl mx-auto relative"
       opts={{
         dragFree: false,
         containScroll: "trimSnaps"
@@ -46,8 +48,12 @@ const ChannelsCarousel = () => {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      {!isMobile && (
+        <>
+          <CarouselPrevious className="hidden md:flex" />
+          <CarouselNext className="hidden md:flex" />
+        </>
+      )}
     </Carousel>
   );
 };

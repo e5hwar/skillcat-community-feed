@@ -29,7 +29,7 @@ const ChannelCard = ({ id, name, imageUrl }: ChannelCardProps) => {
             </span>
           </div>
         )}
-        <h3 className="font-medium text-sm break-words w-full line-clamp-2 overflow-hidden">
+        <h3 className="font-medium text-sm break-words w-full line-clamp-2 leading-5">
           {name}
         </h3>
       </CardContent>

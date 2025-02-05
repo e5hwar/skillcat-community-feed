@@ -161,7 +161,7 @@ const PostCard = ({ post, currentUserId, hideChannelTag = false, onLikeUpdate, o
 
   return (
     <Card className="w-full bg-white shadow-sm">
-      <CardHeader className="flex flex-row items-center gap-4 py-3 px-4">
+      <CardHeader className="flex flex-row items-center gap-4 py-2 px-4">
         <UserAvatar
           profilePicture={post.profile.profile_picture}
           name={post.profile.name}
