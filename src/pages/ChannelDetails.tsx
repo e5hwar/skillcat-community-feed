@@ -61,7 +61,7 @@ const ChannelDetails = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="-ml-3 h-20 w-20"
+              className="-ml-3 h-20 w-20 p-0"
               onClick={() => navigate("/")}
             >
               <ChevronLeft className="h-20 w-20" />
