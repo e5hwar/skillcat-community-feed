@@ -12,24 +12,24 @@ const ChannelCard = ({ id, name, imageUrl }: ChannelCardProps) => {
 
   return (
     <Card 
-      className="w-[200px] cursor-pointer hover:bg-accent transition-colors"
+      className="w-[180px] cursor-pointer hover:bg-accent transition-colors"
       onClick={() => navigate(`/channel/${id}`)}
     >
-      <CardContent className="p-4 flex flex-col items-center gap-3">
+      <CardContent className="p-4 flex items-center gap-3">
         {imageUrl ? (
           <img 
             src={imageUrl} 
             alt={name} 
-            className="w-16 h-16 object-cover rounded-full"
+            className="w-12 h-12 object-cover rounded-full shrink-0"
           />
         ) : (
-          <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-            <span className="text-2xl font-semibold text-muted-foreground">
+          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0">
+            <span className="text-xl font-semibold text-muted-foreground">
               {name.charAt(0).toUpperCase()}
             </span>
           </div>
         )}
-        <h3 className="font-medium text-center">{name}</h3>
+        <h3 className="font-medium text-left">{name}</h3>
       </CardContent>
     </Card>
   );

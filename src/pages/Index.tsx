@@ -20,11 +20,17 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-4">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4">Channels</h2>
-          <ChannelsCarousel />
+        <h1 className="text-3xl font-bold mb-8">Community</h1>
+        <div className="space-y-8">
+          <section>
+            <h2 className="text-lg font-semibold mb-4">Channels</h2>
+            <ChannelsCarousel />
+          </section>
+          <section>
+            <h2 className="text-lg font-semibold mb-4">All posts</h2>
+            <PostsFeed userId={session.user.id} />
+          </section>
         </div>
-        <PostsFeed userId={session.user.id} />
       </div>
     </div>
   );
