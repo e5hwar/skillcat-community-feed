@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,7 +24,7 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
   const { toast } = useToast();
 
   // Fetch channel name if channelId is provided
-  useState(() => {
+  useEffect(() => {
     const fetchChannelName = async () => {
       if (!channelId) return;
       
