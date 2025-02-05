@@ -11,6 +11,7 @@ const ChannelDetails = () => {
   const { channelId } = useParams();
   const navigate = useNavigate();
   const [channelName, setChannelName] = useState("");
+  const [channelDescription, setChannelDescription] = useState<string | null>("");
   const [session, setSession] = useState<any>(null);
   const { toast } = useToast();
 
@@ -20,7 +21,7 @@ const ChannelDetails = () => {
       
       const { data, error } = await supabase
         .from("channels")
-        .select("name")
+        .select("name, description")
         .eq("id", parseInt(channelId))
         .single();
 
@@ -35,6 +36,7 @@ const ChannelDetails = () => {
       }
 
       setChannelName(data.name);
+      setChannelDescription(data.description);
     };
 
     fetchChannel();
@@ -57,13 +59,15 @@ const ChannelDetails = () => {
         <div className="px-2 sm:px-4">
           <Button
             variant="ghost"
-            className="mb-4 -ml-2 flex items-center gap-2"
+            className="mb-4 -ml-2"
             onClick={() => navigate("/")}
           >
             <ChevronLeft className="h-4 w-4" />
-            Back to Community
           </Button>
-          <h1 className="text-2xl font-bold mb-6">{channelName}</h1>
+          <h1 className="text-2xl font-bold mb-2">{channelName}</h1>
+          {channelDescription && (
+            <p className="text-muted-foreground mb-6">{channelDescription}</p>
+          )}
         </div>
         {session && channelId && (
           <PostsFeed userId={session.user.id} defaultChannelId={parseInt(channelId)} />

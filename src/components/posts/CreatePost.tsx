@@ -19,8 +19,28 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [channelName, setChannelName] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Fetch channel name if channelId is provided
+  useState(() => {
+    const fetchChannelName = async () => {
+      if (!channelId) return;
+      
+      const { data, error } = await supabase
+        .from("channels")
+        .select("name")
+        .eq("id", channelId)
+        .single();
+
+      if (!error && data) {
+        setChannelName(data.name);
+      }
+    };
+
+    fetchChannelName();
+  }, [channelId]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -132,7 +152,7 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
       <form onSubmit={handleSubmit}>
         <CardContent className="pt-6 space-y-4">
           <Textarea
-            placeholder="What's on your mind?"
+            placeholder={channelName ? `Post in #${channelName}...` : "What's on your mind?"}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[64px] w-full resize-none overflow-hidden p-4"
