@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+
+import { useState, useRef } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -85,14 +86,6 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
     e.preventDefault();
     e.stopPropagation();
     if (!content.trim() && !selectedFile) return;
-    if (!selectedChannel) {
-      toast({
-        title: "Error",
-        description: "Please select a channel",
-        variant: "destructive",
-      });
-      return;
-    }
 
     setIsSubmitting(true);
     setUploadProgress(0);
@@ -117,7 +110,7 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
           user_id: userId,
           image_url: imageUrl,
           video_url: videoUrl,
-          channel_id: parseInt(selectedChannel)
+          channel_id: selectedChannel ? parseInt(selectedChannel) : null
         }]);
 
       if (error) throw error;
@@ -147,13 +140,13 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
   return (
     <Card className="w-full bg-white shadow-sm">
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <Select
             value={selectedChannel}
             onValueChange={setSelectedChannel}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select channel" />
+              <SelectValue placeholder="Channel" />
             </SelectTrigger>
             <SelectContent>
               {channels?.map((channel) => (
@@ -168,7 +161,7 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
             placeholder="What's on your mind?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="min-h-[200px] w-full resize-none overflow-hidden"
+            className="min-h-[200px] w-full resize-none overflow-hidden border-none shadow-none font-medium text-base"
             style={{ 
               padding: '8px 12px',
               lineHeight: '20px'
@@ -252,3 +245,4 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
 };
 
 export default CreatePost;
+

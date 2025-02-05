@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ const CreatePostPage = () => {
       const { data, error } = await supabase
         .from("channels")
         .select("*")
-        .order("name");
+        .order("name", { ascending: true });
       
       if (error) throw error;
       return data;
@@ -67,7 +68,7 @@ const CreatePostPage = () => {
   return (
     <div className="fixed inset-0 bg-background z-50 overflow-auto">
       <div className="max-w-2xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           {profile && (
             <div className="flex items-center gap-2">
               <UserAvatar
@@ -77,6 +78,7 @@ const CreatePostPage = () => {
               />
               <UserInfo 
                 name={profile.name}
+                bio={profile.bio}
                 size="sm"
                 createdAt=""
               />
@@ -103,3 +105,4 @@ const CreatePostPage = () => {
 };
 
 export default CreatePostPage;
+
