@@ -26,12 +26,14 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
 
   const fetchChannels = async () => {
     try {
+      console.log("Fetching channels...");
       const { data, error } = await supabase
         .from("channels")
         .select("*")
         .order("name");
 
       if (error) throw error;
+      console.log("Fetched channels:", data);
       setChannels(data || []);
     } catch (error: any) {
       console.error("Error fetching channels:", error);
