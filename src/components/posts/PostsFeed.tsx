@@ -108,32 +108,36 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
 
   return (
     <div className="max-w-2xl mx-auto px-2 sm:px-4">
-      <h1 className="text-2xl font-bold text-center mb-4">Community</h1>
-      
-      <div className="mb-4 flex flex-wrap gap-1.5 justify-center">
-        <Button
-          variant={selectedChannel === null ? "default" : "outline"}
-          onClick={() => setSelectedChannel(null)}
-          className="rounded-full text-sm py-1 h-auto"
-          size="sm"
-        >
-          All Posts
-        </Button>
-        {channels.map((channel) => {
-          const hasNoPosts = !posts.some(post => post.channel_id === channel.id);
-          return (
+      <div className="text-left mb-6">
+        <h1 className="text-2xl font-bold mb-4">Community</h1>
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-muted-foreground">Channels</h2>
+          <div className="flex flex-wrap gap-1.5">
             <Button
-              key={channel.id}
-              variant={selectedChannel === channel.id ? "default" : "outline"}
-              onClick={() => setSelectedChannel(channel.id)}
-              className={`rounded-full text-sm py-1 h-auto ${hasNoPosts ? 'opacity-60' : ''}`}
+              variant={selectedChannel === null ? "default" : "outline"}
+              onClick={() => setSelectedChannel(null)}
+              className="rounded-full text-sm py-1 h-auto"
               size="sm"
-              title={channel.description || undefined}
             >
-              {channel.name} {hasNoPosts && '(No posts yet)'}
+              All Posts
             </Button>
-          );
-        })}
+            {channels.map((channel) => {
+              const hasNoPosts = !posts.some(post => post.channel_id === channel.id);
+              return (
+                <Button
+                  key={channel.id}
+                  variant={selectedChannel === channel.id ? "default" : "outline"}
+                  onClick={() => setSelectedChannel(channel.id)}
+                  className={`rounded-full text-sm py-1 h-auto ${hasNoPosts ? 'opacity-60' : ''}`}
+                  size="sm"
+                  title={channel.description || undefined}
+                >
+                  {channel.name} {hasNoPosts && '(No posts yet)'}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">
