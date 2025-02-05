@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ChannelDetails from "./pages/ChannelDetails";
+import CreatePost from "./pages/CreatePost";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/channel/:channelId" element={<ChannelDetails />} />
+          <Route path="/create-post" element={<CreatePost />} />
+          <Route path="/channel/:channelId/create-post" element={<CreatePost />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

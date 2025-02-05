@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import AutoSignIn from "@/components/auth/AutoSignIn";
 import PostsFeed from "@/components/posts/PostsFeed";
 import ChannelsCarousel from "@/components/channels/ChannelsCarousel";
@@ -9,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const Index = () => {
   const [session, setSession] = useState<any>(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["posts"] });
@@ -51,6 +53,13 @@ const Index = () => {
           </section>
         </div>
       </div>
+      <Button
+        className="fixed bottom-6 left-6 rounded-full shadow-lg"
+        size="icon"
+        onClick={() => navigate("/create-post")}
+      >
+        <Plus className="h-6 w-6" />
+      </Button>
     </div>
   );
 };

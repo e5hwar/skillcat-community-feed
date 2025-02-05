@@ -15,7 +15,7 @@ const ChannelCard = ({ id, name, imageUrl }: ChannelCardProps) => {
       className="min-w-[120px] max-w-[192px] cursor-pointer hover:bg-accent transition-colors"
       onClick={() => navigate(`/channel/${id}`)}
     >
-      <CardContent className="p-4 flex flex-col items-start gap-2 h-[120px]">
+      <CardContent className="p-4 pb-6 flex flex-col items-start gap-2 h-[120px]">
         {imageUrl ? (
           <img 
             src={imageUrl} 
