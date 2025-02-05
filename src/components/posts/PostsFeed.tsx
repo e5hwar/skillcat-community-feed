@@ -103,18 +103,19 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
   }, [selectedChannel]);
 
   if (loading) {
-    return <div className="text-center p-4">Loading posts...</div>;
+    return <div className="text-center p-2">Loading posts...</div>;
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Community</h1>
+    <div className="max-w-2xl mx-auto px-2 sm:px-4">
+      <h1 className="text-2xl font-bold text-center mb-4">Community</h1>
       
-      <div className="mb-6 flex flex-wrap gap-2 justify-center">
+      <div className="mb-4 flex flex-wrap gap-1.5 justify-center">
         <Button
           variant={selectedChannel === null ? "default" : "outline"}
           onClick={() => setSelectedChannel(null)}
-          className="rounded-full"
+          className="rounded-full text-sm py-1 h-auto"
+          size="sm"
         >
           All Posts
         </Button>
@@ -125,7 +126,8 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
               key={channel.id}
               variant={selectedChannel === channel.id ? "default" : "outline"}
               onClick={() => setSelectedChannel(channel.id)}
-              className={`rounded-full ${hasNoPosts ? 'opacity-60' : ''}`}
+              className={`rounded-full text-sm py-1 h-auto ${hasNoPosts ? 'opacity-60' : ''}`}
+              size="sm"
               title={channel.description || undefined}
             >
               {channel.name} {hasNoPosts && '(No posts yet)'}
@@ -134,14 +136,14 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
         })}
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         <CreatePost 
           userId={userId} 
           onPostCreated={fetchPosts}
           channelId={selectedChannel} 
         />
         {posts.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-4 text-gray-500">
             No posts yet. Be the first to share something!
           </div>
         ) : (
