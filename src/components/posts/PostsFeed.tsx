@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import CreatePost from "@/components/posts/CreatePost";
 import PostCard from "@/components/posts/PostCard";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -79,11 +78,6 @@ const PostsFeed = ({ userId, defaultChannelId, hideChannelTag }: PostsFeedProps)
   return (
     <div className="max-w-2xl mx-auto">
       <div className="space-y-4">
-        <CreatePost 
-          userId={userId} 
-          onPostCreated={fetchPosts}
-          channelId={selectedChannel} 
-        />
         {posts.length === 0 ? (
           <div className="text-center py-4 text-gray-500">
             No posts yet. Be the first to share something!
