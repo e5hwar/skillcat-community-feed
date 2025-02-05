@@ -126,22 +126,13 @@ const PostsFeed = ({ userId, defaultChannelId }: PostsFeedProps) => {
               {channels.map((channel) => {
                 const hasNoPosts = !posts.some(post => post.channel_id === channel.id);
                 return (
-                  <Button
+                  <button
                     key={channel.id}
-                    variant="outline"
                     onClick={() => handleChannelClick(channel.id)}
-                    className={`justify-start text-left h-auto py-3 ${hasNoPosts ? 'opacity-60' : ''}`}
-                    title={channel.description || undefined}
+                    className={`text-left py-2 hover:text-primary transition-colors ${hasNoPosts ? 'opacity-60' : ''}`}
                   >
-                    <div>
-                      <div className="font-medium">{channel.name}</div>
-                      {channel.description && (
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {channel.description}
-                        </div>
-                      )}
-                    </div>
-                  </Button>
+                    {channel.name}
+                  </button>
                 );
               })}
             </div>

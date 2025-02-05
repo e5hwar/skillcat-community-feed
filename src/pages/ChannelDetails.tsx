@@ -56,17 +56,20 @@ const ChannelDetails = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-4">
       <div className="max-w-4xl mx-auto">
-        <div className="px-2 sm:px-4">
-          <Button
-            variant="ghost"
-            className="mb-4 -ml-2"
-            onClick={() => navigate("/")}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold mb-2">{channelName}</h1>
+        <div className="px-2 sm:px-4 mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="-ml-2"
+              onClick={() => navigate("/")}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <h1 className="text-2xl font-bold">{channelName}</h1>
+          </div>
           {channelDescription && (
-            <p className="text-muted-foreground mb-6">{channelDescription}</p>
+            <p className="text-muted-foreground">{channelDescription}</p>
           )}
         </div>
         {session && channelId && (
