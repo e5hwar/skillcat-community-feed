@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import PostCard from "@/components/posts/PostCard";
 import { useToast } from "@/hooks/use-toast";
-import { useIsMobile } from "@/hooks/use-mobile";
+import PostsList from "./feed/PostsList";
+import PostsFeedEmpty from "./feed/PostsFeedEmpty";
+import PostsFeedLoading from "./feed/PostsFeedLoading";
 
 interface PostsFeedProps {
   userId: string;
@@ -16,8 +16,6 @@ const PostsFeed = ({ userId, defaultChannelId, hideChannelTag }: PostsFeedProps)
   const [selectedChannel, setSelectedChannel] = useState<number | null>(defaultChannelId || null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const navigate = useNavigate();
-  const isMobile = useIsMobile();
 
   const fetchPosts = async () => {
     try {
@@ -72,29 +70,22 @@ const PostsFeed = ({ userId, defaultChannelId, hideChannelTag }: PostsFeedProps)
   }, [selectedChannel]);
 
   if (loading) {
-    return <div className="text-center p-2">Loading posts...</div>;
+    return <PostsFeedLoading />;
   }
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="space-y-4">
-        {posts.length === 0 ? (
-          <div className="text-center py-4 text-gray-500">
-            No posts yet. Be the first to share something!
-          </div>
-        ) : (
-          posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              currentUserId={userId}
-              onLikeUpdate={fetchPosts}
-              onPostDeleted={() => handlePostDeleted(post.id)}
-              hideChannelTag={hideChannelTag}
-            />
-          ))
-        )}
-      </div>
+      {posts.length === 0 ? (
+        <PostsFeedEmpty />
+      ) : (
+        <PostsList
+          posts={posts}
+          currentUserId={userId}
+          onLikeUpdate={fetchPosts}
+          onPostDeleted={handlePostDeleted}
+          hideChannelTag={hideChannelTag}
+        />
+      )}
     </div>
   );
 };
