@@ -4,6 +4,13 @@ import CreatePost from "@/components/posts/CreatePost";
 import PostCard from "@/components/posts/PostCard";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+
+interface Channel {
+  id: number;
+  name: string;
+  description: string | null;
+}
 
 interface PostsFeedProps {
   userId: string;
@@ -11,14 +18,35 @@ interface PostsFeedProps {
 
 const PostsFeed = ({ userId }: PostsFeedProps) => {
   const [posts, setPosts] = useState<any[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [selectedChannel, setSelectedChannel] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
+  const fetchChannels = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("channels")
+        .select("*")
+        .order("name");
+
+      if (error) throw error;
+      setChannels(data || []);
+    } catch (error: any) {
+      console.error("Error fetching channels:", error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const fetchPosts = async () => {
     try {
       console.log("Fetching posts...");
-      const { data, error } = await supabase
+      let query = supabase
         .from("posts")
         .select(`
           *,
@@ -33,6 +61,12 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
           )
         `)
         .order("created_at", { ascending: false });
+
+      if (selectedChannel !== null) {
+        query = query.eq("channel_id", selectedChannel);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching posts:", error);
@@ -58,8 +92,13 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
   };
 
   useEffect(() => {
+    fetchChannels();
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [selectedChannel]);
 
   if (loading) {
     return <div className="text-center p-4">Loading posts...</div>;
@@ -67,8 +106,35 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
 
   return (
     <div className="max-w-2xl mx-auto px-4">
+      <h1 className="text-3xl font-bold text-center mb-8">Community</h1>
+      
+      <div className="mb-6 flex flex-wrap gap-2 justify-center">
+        <Button
+          variant={selectedChannel === null ? "default" : "outline"}
+          onClick={() => setSelectedChannel(null)}
+          className="rounded-full"
+        >
+          All Posts
+        </Button>
+        {channels.map((channel) => (
+          <Button
+            key={channel.id}
+            variant={selectedChannel === channel.id ? "default" : "outline"}
+            onClick={() => setSelectedChannel(channel.id)}
+            className="rounded-full"
+            title={channel.description || undefined}
+          >
+            {channel.name}
+          </Button>
+        ))}
+      </div>
+
       <div className="space-y-6">
-        <CreatePost userId={userId} onPostCreated={fetchPosts} />
+        <CreatePost 
+          userId={userId} 
+          onPostCreated={fetchPosts}
+          channelId={selectedChannel} 
+        />
         {posts.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             No posts yet. Be the first to share something!

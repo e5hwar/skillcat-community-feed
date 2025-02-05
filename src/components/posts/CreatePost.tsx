@@ -10,9 +10,10 @@ import { Progress } from "@/components/ui/progress";
 interface CreatePostProps {
   userId: string;
   onPostCreated: () => void;
+  channelId: number | null;
 }
 
-const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
+const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -73,7 +74,7 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation(); // Prevent event bubbling
+    e.stopPropagation();
     if (!content.trim() && !selectedFile) return;
 
     setIsSubmitting(true);
@@ -98,7 +99,8 @@ const CreatePost = ({ userId, onPostCreated }: CreatePostProps) => {
           content, 
           user_id: userId,
           image_url: imageUrl,
-          video_url: videoUrl
+          video_url: videoUrl,
+          channel_id: channelId
         }]);
 
       if (error) throw error;

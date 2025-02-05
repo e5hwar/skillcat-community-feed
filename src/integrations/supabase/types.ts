@@ -9,6 +9,24 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      channels: {
+        Row: {
+          description: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          name: string
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           content: string
@@ -86,6 +104,7 @@ export type Database = {
       }
       posts: {
         Row: {
+          channel_id: number | null
           content: string
           created_at: string | null
           id: number
@@ -94,6 +113,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          channel_id?: number | null
           content: string
           created_at?: string | null
           id?: number
@@ -102,6 +122,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          channel_id?: number | null
           content?: string
           created_at?: string | null
           id?: number
@@ -110,6 +131,13 @@ export type Database = {
           video_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "posts_user_id_fkey"
             columns: ["user_id"]
