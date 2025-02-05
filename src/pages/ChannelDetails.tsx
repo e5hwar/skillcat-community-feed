@@ -57,7 +57,7 @@ const ChannelDetails = () => {
     <div className="min-h-screen bg-gray-50 py-4">
       <div className="max-w-4xl mx-auto">
         <div className="px-2 sm:px-4 mb-6">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center mb-4">
             <Button
               variant="ghost"
               size="icon"
@@ -66,11 +66,13 @@ const ChannelDetails = () => {
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <h1 className="text-2xl font-bold">{channelName}</h1>
+            <div>
+              <h1 className="text-2xl font-bold">{channelName}</h1>
+              {channelDescription && (
+                <p className="text-sm text-muted-foreground mt-1">{channelDescription}</p>
+              )}
+            </div>
           </div>
-          {channelDescription && (
-            <p className="text-muted-foreground">{channelDescription}</p>
-          )}
         </div>
         {session && channelId && (
           <PostsFeed userId={session.user.id} defaultChannelId={parseInt(channelId)} />
