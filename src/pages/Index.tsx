@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AutoSignIn from "@/components/auth/AutoSignIn";
 import PostsFeed from "@/components/posts/PostsFeed";
+import ChannelsCarousel from "@/components/channels/ChannelsCarousel";
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);
@@ -18,7 +19,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold mb-4">Channels</h2>
+          <ChannelsCarousel />
+        </div>
         <PostsFeed userId={session.user.id} />
       </div>
     </div>
