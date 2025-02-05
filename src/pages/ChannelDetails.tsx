@@ -61,15 +61,15 @@ const ChannelDetails = () => {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-20 w-20 p-0 ${!channelDescription ? 'self-center' : ''}`}
+              className="-ml-3 h-14 w-14"
               onClick={() => navigate("/")}
             >
-              <ChevronLeft className="h-12 w-12" />
+              <ChevronLeft className="h-10 w-10" />
             </Button>
-            <div className="-mt-1">
-              <h1 className="text-2xl font-bold leading-tight">{channelName}</h1>
+            <div>
+              <h1 className="text-2xl font-bold">{channelName}</h1>
               {channelDescription && (
-                <p className="text-sm text-muted-foreground leading-tight mt-0.5">{channelDescription}</p>
+                <p className="text-sm text-muted-foreground mt-1">{channelDescription}</p>
               )}
             </div>
           </div>
