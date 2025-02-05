@@ -75,7 +75,11 @@ const ChannelDetails = () => {
           </div>
         </div>
         {session && channelId && (
-          <PostsFeed userId={session.user.id} defaultChannelId={parseInt(channelId)} />
+          <PostsFeed 
+            userId={session.user.id} 
+            defaultChannelId={parseInt(channelId)}
+            hideChannelTag
+          />
         )}
       </div>
     </div>

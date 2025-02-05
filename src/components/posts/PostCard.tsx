@@ -39,11 +39,12 @@ interface PostCardProps {
     }[];
   };
   currentUserId: string;
+  hideChannelTag?: boolean;
   onLikeUpdate?: () => void;
   onPostDeleted?: () => void;
 }
 
-const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCardProps) => {
+const PostCard = ({ post, currentUserId, hideChannelTag = false, onLikeUpdate, onPostDeleted }: PostCardProps) => {
   const [isLiking, setIsLiking] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
   const [localLikesCount, setLocalLikesCount] = useState(0);
@@ -176,7 +177,7 @@ const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCard
               <DeleteButton onDelete={handleDeletePost} type="post" />
             )}
           </div>
-          {channelName && (
+          {!hideChannelTag && channelName && (
             <Badge variant="secondary" className="mt-1 w-fit flex items-center gap-1">
               <Tag className="h-3 w-3" />
               {channelName}
