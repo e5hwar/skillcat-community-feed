@@ -20,8 +20,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-4">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">Community</h1>
-        <div className="space-y-8">
+        <h1 className="text-3xl font-bold mb-4">Community</h1>
+        <div className="space-y-6">
           <section>
             <h2 className="text-lg font-semibold mb-2">Channels</h2>
             <ChannelsCarousel />

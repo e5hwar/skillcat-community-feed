@@ -150,15 +150,15 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
   return (
     <Card className="w-full bg-white shadow-sm">
       <form onSubmit={handleSubmit}>
-        <CardContent className="pt-6 space-y-4">
+        <CardContent className="pt-4 space-y-4">
           <Textarea
             placeholder={channelName ? `Post in #${channelName}...` : "What's on your mind?"}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="min-h-[64px] w-full resize-none overflow-hidden p-4"
+            className="min-h-[64px] w-full resize-none overflow-hidden"
             style={{ 
               height: '64px',
-              padding: '12px 16px',
+              padding: '8px 12px',
               lineHeight: '20px'
             }}
             disabled={isSubmitting}

@@ -15,7 +15,7 @@ const ChannelCard = ({ id, name, imageUrl }: ChannelCardProps) => {
       className="w-[120px] cursor-pointer hover:bg-accent transition-colors"
       onClick={() => navigate(`/channel/${id}`)}
     >
-      <CardContent className="p-4 flex flex-col items-center gap-2">
+      <CardContent className="p-4 flex flex-col items-start gap-2">
         {imageUrl ? (
           <img 
             src={imageUrl} 
@@ -29,7 +29,7 @@ const ChannelCard = ({ id, name, imageUrl }: ChannelCardProps) => {
             </span>
           </div>
         )}
-        <h3 className="font-medium text-sm text-center">{name}</h3>
+        <h3 className="font-medium text-sm">{name}</h3>
       </CardContent>
     </Card>
   );

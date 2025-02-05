@@ -161,7 +161,7 @@ const PostCard = ({ post, currentUserId, hideChannelTag = false, onLikeUpdate, o
 
   return (
     <Card className="w-full bg-white shadow-sm">
-      <CardHeader className="flex flex-row items-center gap-4">
+      <CardHeader className="flex flex-row items-center gap-4 py-3 px-4">
         <UserAvatar
           profilePicture={post.profile.profile_picture}
           name={post.profile.name}
@@ -185,7 +185,7 @@ const PostCard = ({ post, currentUserId, hideChannelTag = false, onLikeUpdate, o
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 px-4 py-2">
         <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
         {post.image_url && (
           <img
