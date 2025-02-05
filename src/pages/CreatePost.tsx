@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import CreatePost from "@/components/posts/CreatePost";
+import AutoSignIn from "@/components/auth/AutoSignIn";
 import {
   Select,
   SelectContent,
@@ -17,6 +18,7 @@ const CreatePostPage = () => {
   const navigate = useNavigate();
   const { channelId } = useParams();
   const [selectedChannel, setSelectedChannel] = useState<string>(channelId || "");
+  const [session, setSession] = useState<any>(null);
 
   const { data: channels } = useQuery({
     queryKey: ["channels"],
@@ -36,6 +38,17 @@ const CreatePostPage = () => {
       setSelectedChannel(channelId);
     }
   }, [channelId]);
+
+  if (!session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <p>Loading...</p>
+        </div>
+        <AutoSignIn onSessionUpdate={setSession} />
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-background z-50 overflow-auto">
