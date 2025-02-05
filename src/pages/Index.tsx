@@ -23,7 +23,7 @@ const Index = () => {
         <h1 className="text-3xl font-bold mb-8">Community</h1>
         <div className="space-y-8">
           <section>
-            <h2 className="text-lg font-semibold mb-4">Channels</h2>
+            <h2 className="text-lg font-semibold mb-2">Channels</h2>
             <ChannelsCarousel />
           </section>
           <section>
