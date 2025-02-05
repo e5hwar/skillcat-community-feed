@@ -1,4 +1,4 @@
-
+```typescript
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ const CreatePostPage = () => {
       const { data, error } = await supabase
         .from("channels")
         .select("*")
-        .order("name", { ascending: true });
+        .order('id', { ascending: true });
       
       if (error) throw error;
       return data;
@@ -105,4 +105,4 @@ const CreatePostPage = () => {
 };
 
 export default CreatePostPage;
-
+```

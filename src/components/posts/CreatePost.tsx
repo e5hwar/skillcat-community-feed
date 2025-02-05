@@ -1,4 +1,4 @@
-
+```typescript
 import { useState, useRef } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -140,7 +140,7 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
   return (
     <Card className="w-full bg-white shadow-sm">
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6">
+        <CardContent className="pt-8 space-y-6">
           <Select
             value={selectedChannel}
             onValueChange={setSelectedChannel}
@@ -245,4 +245,4 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
 };
 
 export default CreatePost;
-
+```
