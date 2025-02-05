@@ -28,7 +28,13 @@ const ChannelsCarousel = () => {
   }
 
   return (
-    <Carousel className="w-full max-w-5xl mx-auto">
+    <Carousel 
+      className="w-full max-w-5xl mx-auto"
+      opts={{
+        dragFree: false,
+        containScroll: "trimSnaps"
+      }}
+    >
       <CarouselContent className="-ml-2 md:-ml-4">
         {channels?.map((channel) => (
           <CarouselItem key={channel.id} className="pl-2 md:pl-4 basis-auto">
