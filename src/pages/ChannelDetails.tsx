@@ -57,14 +57,14 @@ const ChannelDetails = () => {
     <div className="min-h-screen bg-gray-50 py-4">
       <div className="max-w-4xl mx-auto">
         <div className="px-2 sm:px-4 mb-6">
-          <div className="flex items-center mb-4">
+          <div className="flex items-start gap-3">
             <Button
               variant="ghost"
               size="icon"
-              className="-ml-2"
+              className="-ml-3 h-12 w-12"
               onClick={() => navigate("/")}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-8 w-8" />
             </Button>
             <div>
               <h1 className="text-2xl font-bold">{channelName}</h1>
