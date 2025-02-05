@@ -1,6 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Heart, MessageSquare, Tag } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -18,6 +19,7 @@ interface PostCardProps {
     video_url?: string | null;
     created_at: string;
     user_id: string;
+    channel_id?: number | null;
     profile: {
       name: string;
       bio: string | null;
@@ -46,7 +48,26 @@ const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCard
   const [hasLiked, setHasLiked] = useState(false);
   const [localLikesCount, setLocalLikesCount] = useState(0);
   const [showComments, setShowComments] = useState(false);
+  const [channelName, setChannelName] = useState<string | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchChannel = async () => {
+      if (post.channel_id) {
+        const { data, error } = await supabase
+          .from("channels")
+          .select("name")
+          .eq("id", post.channel_id)
+          .single();
+        
+        if (!error && data) {
+          setChannelName(data.name);
+        }
+      }
+    };
+    
+    fetchChannel();
+  }, [post.channel_id]);
 
   useEffect(() => {
     const checkIfUserLiked = async () => {
@@ -155,6 +176,12 @@ const PostCard = ({ post, currentUserId, onLikeUpdate, onPostDeleted }: PostCard
               <DeleteButton onDelete={handleDeletePost} type="post" />
             )}
           </div>
+          {channelName && (
+            <Badge variant="secondary" className="mt-1 w-fit flex items-center gap-1">
+              <Tag className="h-3 w-3" />
+              {channelName}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
