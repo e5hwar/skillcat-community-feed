@@ -7,13 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import CreatePost from "@/components/posts/CreatePost";
 import AutoSignIn from "@/components/auth/AutoSignIn";
 import UserAvatar from "@/components/shared/UserAvatar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import UserInfo from "@/components/shared/UserInfo";
 
 const CreatePostPage = () => {
   const navigate = useNavigate();
@@ -74,33 +68,20 @@ const CreatePostPage = () => {
     <div className="fixed inset-0 bg-background z-50 overflow-auto">
       <div className="max-w-2xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Select
-              value={selectedChannel}
-              onValueChange={setSelectedChannel}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select channel" />
-              </SelectTrigger>
-              <SelectContent>
-                {channels?.map((channel) => (
-                  <SelectItem key={channel.id} value={channel.id.toString()}>
-                    {channel.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {profile && (
-              <div className="flex items-center gap-2">
-                <UserAvatar
-                  profilePicture={profile.profile_picture}
-                  name={profile.name}
-                  size="sm"
-                />
-                <span className="text-sm font-medium">{profile.name}</span>
-              </div>
-            )}
-          </div>
+          {profile && (
+            <div className="flex items-center gap-2">
+              <UserAvatar
+                profilePicture={profile.profile_picture}
+                name={profile.name}
+                size="sm"
+              />
+              <UserInfo 
+                name={profile.name}
+                size="sm"
+                createdAt=""
+              />
+            </div>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -114,6 +95,7 @@ const CreatePostPage = () => {
           userId={session?.user?.id || ""}
           onPostCreated={() => navigate(-1)}
           channelId={selectedChannel ? parseInt(selectedChannel) : null}
+          channels={channels || []}
         />
       </div>
     </div>

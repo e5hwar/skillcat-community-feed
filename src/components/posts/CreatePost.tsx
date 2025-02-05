@@ -6,40 +6,30 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Image, Video, Loader2, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CreatePostProps {
   userId: string;
   onPostCreated: () => void;
   channelId: number | null;
+  channels: any[];
 }
 
-const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
+const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostProps) => {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [channelName, setChannelName] = useState<string>("");
+  const [selectedChannel, setSelectedChannel] = useState<string>(channelId?.toString() || "");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchChannelName = async () => {
-      if (!channelId) return;
-      
-      const { data, error } = await supabase
-        .from("channels")
-        .select("name")
-        .eq("id", channelId)
-        .single();
-
-      if (!error && data) {
-        setChannelName(data.name);
-      }
-    };
-
-    fetchChannelName();
-  }, [channelId]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -95,6 +85,14 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
     e.preventDefault();
     e.stopPropagation();
     if (!content.trim() && !selectedFile) return;
+    if (!selectedChannel) {
+      toast({
+        title: "Error",
+        description: "Please select a channel",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     setUploadProgress(0);
@@ -119,7 +117,7 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
           user_id: userId,
           image_url: imageUrl,
           video_url: videoUrl,
-          channel_id: channelId
+          channel_id: parseInt(selectedChannel)
         }]);
 
       if (error) throw error;
@@ -149,9 +147,25 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
   return (
     <Card className="w-full bg-white shadow-sm">
       <form onSubmit={handleSubmit}>
-        <CardContent className="pt-4 space-y-4">
+        <CardContent className="space-y-4">
+          <Select
+            value={selectedChannel}
+            onValueChange={setSelectedChannel}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select channel" />
+            </SelectTrigger>
+            <SelectContent>
+              {channels?.map((channel) => (
+                <SelectItem key={channel.id} value={channel.id.toString()}>
+                  #{channel.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <Textarea
-            placeholder={channelName ? `Post in #${channelName}...` : "What's on your mind?"}
+            placeholder="What's on your mind?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[200px] w-full resize-none overflow-hidden"
@@ -161,6 +175,7 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
             }}
             disabled={isSubmitting}
           />
+          
           <input
             type="file"
             ref={fileInputRef}
@@ -206,18 +221,16 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
           )}
         </CardContent>
         <CardFooter className="flex justify-between items-center">
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isSubmitting}
-            >
-              <Image className="h-5 w-5 mr-1" />
-              Media
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isSubmitting}
+          >
+            <Image className="h-5 w-5 mr-1" />
+            Media
+          </Button>
           <Button 
             type="submit" 
             disabled={isSubmitting || (!content.trim() && !selectedFile)}
