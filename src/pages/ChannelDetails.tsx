@@ -57,19 +57,19 @@ const ChannelDetails = () => {
     <div className="min-h-screen bg-gray-50 py-4">
       <div className="max-w-4xl mx-auto">
         <div className="px-2 sm:px-4 mb-6">
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-2">
             <Button
               variant="ghost"
               size="icon"
-              className="-ml-3 h-14 w-14"
+              className="h-20 w-20 p-0"
               onClick={() => navigate("/")}
             >
-              <ChevronLeft className="h-10 w-10" />
+              <ChevronLeft className="h-12 w-12" />
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold">{channelName}</h1>
+            <div className="-mt-1">
+              <h1 className="text-2xl font-bold leading-tight">{channelName}</h1>
               {channelDescription && (
-                <p className="text-sm text-muted-foreground mt-1">{channelDescription}</p>
+                <p className="text-sm text-muted-foreground leading-tight mt-0.5">{channelDescription}</p>
               )}
             </div>
           </div>
