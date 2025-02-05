@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import CreatePost from "@/components/posts/CreatePost";
 import PostCard from "@/components/posts/PostCard";
@@ -14,14 +15,16 @@ interface Channel {
 
 interface PostsFeedProps {
   userId: string;
+  defaultChannelId?: number;
 }
 
-const PostsFeed = ({ userId }: PostsFeedProps) => {
+const PostsFeed = ({ userId, defaultChannelId }: PostsFeedProps) => {
   const [posts, setPosts] = useState<any[]>([]);
   const [channels, setChannels] = useState<Channel[]>([]);
-  const [selectedChannel, setSelectedChannel] = useState<number | null>(null);
+  const [selectedChannel, setSelectedChannel] = useState<number | null>(defaultChannelId || null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   const fetchChannels = async () => {
@@ -102,43 +105,49 @@ const PostsFeed = ({ userId }: PostsFeedProps) => {
     fetchPosts();
   }, [selectedChannel]);
 
+  const handleChannelClick = (channelId: number) => {
+    if (!defaultChannelId) {
+      navigate(`/channel/${channelId}`);
+    }
+  };
+
   if (loading) {
     return <div className="text-center p-2">Loading posts...</div>;
   }
 
   return (
     <div className="max-w-2xl mx-auto px-2 sm:px-4">
-      <div className="text-left mb-6">
-        <h1 className="text-2xl font-bold mb-4">Community</h1>
-        <div className="space-y-2">
-          <h2 className="text-sm font-medium text-muted-foreground">Channels</h2>
-          <div className="flex flex-wrap gap-1.5">
-            <Button
-              variant={selectedChannel === null ? "default" : "outline"}
-              onClick={() => setSelectedChannel(null)}
-              className="rounded-full text-sm py-1 h-auto"
-              size="sm"
-            >
-              All Posts
-            </Button>
-            {channels.map((channel) => {
-              const hasNoPosts = !posts.some(post => post.channel_id === channel.id);
-              return (
-                <Button
-                  key={channel.id}
-                  variant={selectedChannel === channel.id ? "default" : "outline"}
-                  onClick={() => setSelectedChannel(channel.id)}
-                  className={`rounded-full text-sm py-1 h-auto ${hasNoPosts ? 'opacity-60' : ''}`}
-                  size="sm"
-                  title={channel.description || undefined}
-                >
-                  {channel.name} {hasNoPosts && '(No posts yet)'}
-                </Button>
-              );
-            })}
+      {!defaultChannelId && (
+        <div className="text-left mb-6">
+          <h1 className="text-2xl font-bold mb-4">Community</h1>
+          <div className="space-y-2">
+            <h2 className="text-sm font-medium text-muted-foreground">Channels</h2>
+            <div className="flex flex-col gap-2">
+              {channels.map((channel) => {
+                const hasNoPosts = !posts.some(post => post.channel_id === channel.id);
+                return (
+                  <Button
+                    key={channel.id}
+                    variant="outline"
+                    onClick={() => handleChannelClick(channel.id)}
+                    className={`justify-start text-left h-auto py-3 ${hasNoPosts ? 'opacity-60' : ''}`}
+                    title={channel.description || undefined}
+                  >
+                    <div>
+                      <div className="font-medium">{channel.name}</div>
+                      {channel.description && (
+                        <div className="text-sm text-muted-foreground mt-1">
+                          {channel.description}
+                        </div>
+                      )}
+                    </div>
+                  </Button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="space-y-4">
         <CreatePost 
