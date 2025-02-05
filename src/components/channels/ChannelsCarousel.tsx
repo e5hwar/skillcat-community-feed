@@ -1,3 +1,4 @@
+
 import {
   Carousel,
   CarouselContent,
@@ -18,7 +19,7 @@ const ChannelsCarousel = () => {
       const { data, error } = await supabase
         .from("channels")
         .select("*")
-        .order("name");
+        .order('id', { ascending: true });
       
       if (error) throw error;
       return data;
