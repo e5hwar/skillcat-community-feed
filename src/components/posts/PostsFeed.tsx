@@ -16,9 +16,10 @@ interface Channel {
 interface PostsFeedProps {
   userId: string;
   defaultChannelId?: number;
+  hideChannelTag?: boolean;
 }
 
-const PostsFeed = ({ userId, defaultChannelId }: PostsFeedProps) => {
+const PostsFeed = ({ userId, defaultChannelId, hideChannelTag }: PostsFeedProps) => {
   const [posts, setPosts] = useState<any[]>([]);
   const [channels, setChannels] = useState<Channel[]>([]);
   const [selectedChannel, setSelectedChannel] = useState<number | null>(defaultChannelId || null);
@@ -158,6 +159,7 @@ const PostsFeed = ({ userId, defaultChannelId }: PostsFeedProps) => {
               currentUserId={userId}
               onLikeUpdate={fetchPosts}
               onPostDeleted={() => handlePostDeleted(post.id)}
+              hideChannelTag={hideChannelTag}
             />
           ))
         )}
