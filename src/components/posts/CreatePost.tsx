@@ -23,7 +23,6 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Fetch channel name if channelId is provided
   useEffect(() => {
     const fetchChannelName = async () => {
       if (!channelId) return;
@@ -155,9 +154,8 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
             placeholder={channelName ? `Post in #${channelName}...` : "What's on your mind?"}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="min-h-[64px] w-full resize-none overflow-hidden"
+            className="min-h-[200px] w-full resize-none overflow-hidden"
             style={{ 
-              height: '64px',
               padding: '8px 12px',
               lineHeight: '20px'
             }}
@@ -223,7 +221,7 @@ const CreatePost = ({ userId, onPostCreated, channelId }: CreatePostProps) => {
           <Button 
             type="submit" 
             disabled={isSubmitting || (!content.trim() && !selectedFile)}
-            className="bg-blue-600 hover:bg-blue-700 relative touch-manipulation"
+            className="bg-[#01023B] hover:bg-[#01023B]/90 relative touch-manipulation"
           >
             {isSubmitting ? (
               <>

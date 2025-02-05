@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import CreatePost from "@/components/posts/CreatePost";
 import AutoSignIn from "@/components/auth/AutoSignIn";
+import UserAvatar from "@/components/shared/UserAvatar";
 import {
   Select,
   SelectContent,
@@ -19,6 +20,7 @@ const CreatePostPage = () => {
   const { channelId } = useParams();
   const [selectedChannel, setSelectedChannel] = useState<string>(channelId || "");
   const [session, setSession] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
 
   const { data: channels } = useQuery({
     queryKey: ["channels"],
@@ -32,6 +34,24 @@ const CreatePostPage = () => {
       return data;
     },
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!session?.user?.id) return;
+      
+      const { data } = await supabase
+        .from("profile")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
+      
+      if (data) {
+        setProfile(data);
+      }
+    };
+
+    fetchProfile();
+  }, [session?.user?.id]);
 
   useEffect(() => {
     if (channelId) {
@@ -54,6 +74,33 @@ const CreatePostPage = () => {
     <div className="fixed inset-0 bg-background z-50 overflow-auto">
       <div className="max-w-2xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Select
+              value={selectedChannel}
+              onValueChange={setSelectedChannel}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select channel" />
+              </SelectTrigger>
+              <SelectContent>
+                {channels?.map((channel) => (
+                  <SelectItem key={channel.id} value={channel.id.toString()}>
+                    {channel.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {profile && (
+              <div className="flex items-center gap-2">
+                <UserAvatar
+                  profilePicture={profile.profile_picture}
+                  name={profile.name}
+                  size="sm"
+                />
+                <span className="text-sm font-medium">{profile.name}</span>
+              </div>
+            )}
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -62,21 +109,6 @@ const CreatePostPage = () => {
           >
             <X className="h-6 w-6" />
           </Button>
-          <Select
-            value={selectedChannel}
-            onValueChange={setSelectedChannel}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select channel" />
-            </SelectTrigger>
-            <SelectContent>
-              {channels?.map((channel) => (
-                <SelectItem key={channel.id} value={channel.id.toString()}>
-                  {channel.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
         <CreatePost
           userId={session?.user?.id || ""}

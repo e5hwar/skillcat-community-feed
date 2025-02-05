@@ -54,11 +54,11 @@ const Index = () => {
         </div>
       </div>
       <Button
-        className="fixed bottom-6 left-6 rounded-full shadow-lg"
+        className="fixed bottom-6 right-6 rounded-full shadow-lg h-16 w-16 bg-[#01023B] hover:bg-[#01023B]/90"
         size="icon"
         onClick={() => navigate("/create-post")}
       >
-        <Plus className="h-6 w-6" />
+        <Plus className="h-8 w-8 stroke-[3]" />
       </Button>
     </div>
   );
