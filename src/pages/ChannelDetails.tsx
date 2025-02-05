@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import PostsFeed from "@/components/posts/PostsFeed";
 import { useToast } from "@/hooks/use-toast";
+import AutoSignIn from "@/components/auth/AutoSignIn";
 
 const ChannelDetails = () => {
   const { channelId } = useParams();
@@ -20,7 +21,7 @@ const ChannelDetails = () => {
       const { data, error } = await supabase
         .from("channels")
         .select("name")
-        .eq("id", channelId)
+        .eq("id", parseInt(channelId))
         .single();
 
       if (error) {
@@ -38,6 +39,17 @@ const ChannelDetails = () => {
 
     fetchChannel();
   }, [channelId, navigate, toast]);
+
+  if (!session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <p>Loading...</p>
+        </div>
+        <AutoSignIn onSessionUpdate={setSession} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-4">
