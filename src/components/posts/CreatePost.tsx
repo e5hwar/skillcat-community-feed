@@ -82,9 +82,7 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleSubmit = async () => {
     if (!content.trim() && !selectedFile) return;
 
     setIsSubmitting(true);
@@ -139,7 +137,7 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
 
   return (
     <Card className="w-full bg-white shadow-sm">
-      <form onSubmit={handleSubmit}>
+      <div>
         <CardContent className="pt-8 space-y-6">
           <Select
             value={selectedChannel}
@@ -225,7 +223,7 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
             Media
           </Button>
           <Button 
-            type="submit" 
+            onClick={handleSubmit}
             disabled={isSubmitting || (!content.trim() && !selectedFile)}
             className="bg-[#01023B] hover:bg-[#01023B]/90 relative touch-manipulation"
           >
@@ -239,7 +237,7 @@ const CreatePost = ({ userId, onPostCreated, channelId, channels }: CreatePostPr
             )}
           </Button>
         </CardFooter>
-      </form>
+      </div>
     </Card>
   );
 };
